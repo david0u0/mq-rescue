@@ -1,0 +1,40 @@
+.mq-label {
+	cursor: pointer;
+	height: 20px;
+    min-width: 50px;
+    display: inline-block;
+    text-align: center;
+    border-color: gray;
+    border-width: 1px;
+    border-style: solid;
+    border-right-style: none;
+    border-radius: 1px;
+    padding: 3px;
+}
+
+.mq-status-bar {
+    height: 35px;
+    padding-left: 20px;
+    border-bottom-color: gray;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    display: flex;
+    align-items:center;
+}
+
+.topic-bar {
+    border-right-color: gray;
+    border-right-width: 2px;
+    border-right-style: solid;
+    flex: 1;
+    overflow-y: scroll;
+}
+
+.send-message-area {
+    height: 200px;
+    width: 100%;
+}
+
+.main {
+    flex: 3;
+}

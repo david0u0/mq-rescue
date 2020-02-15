@@ -1,0 +1,92 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+        "process": true,
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        }
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "no-unused-vars": [
+            "warn"
+        ],
+        "no-var": [
+            "error"
+        ],
+        "no-undef": [
+            "error"
+        ],
+        "no-trailing-spaces": [
+            "error"
+        ],
+        "curly": [
+            "error"
+        ],
+        "guard-for-in": [
+            "error"
+        ],
+        "keyword-spacing": [
+            "error"
+        ],
+        "indent": [
+            "error",
+            "tab",
+            { "SwitchCase": 1 }
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+                "varsIgnorePattern": "_.*"
+            }
+        ],
+        "@typescript-eslint/semi": [
+            "error"
+        ],
+        "@typescript-eslint/no-use-before-define": [
+            "error"
+        ],
+        "@typescript-eslint/no-explicit-any": [
+            "error"
+        ],
+        "@typescript-eslint/class-name-casing": [
+            "error"
+        ],
+        "@typescript-eslint/explicit-function-return-type": [
+            "error",
+            {
+                "allowExpressions": true
+            }
+        ],
+        "react/jsx-uses-vars": "warn",
+        "react/jsx-uses-react": "warn",
+        "react/react-in-jsx-scope": "error"
+    }
+}
