@@ -4,8 +4,8 @@
   "description": "mqtt 救星",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "tsc; webpack; electron .",
-    "lint": "eslint main.ts src/  --ext .ts,.tsx --ignore-path .gitignore "
+    "start": "tsc && webpack && electron .",
+    "check": "eslint main.ts src/  --ext .ts,.tsx --ignore-path .gitignore && tsc"
   },
   "author": "DavidYo",
   "license": "ISC",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "electron": "^2.0.2",
+    "mqtt": "^3.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   }

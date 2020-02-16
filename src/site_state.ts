@@ -3,4 +3,5 @@ export type SiteState = {
     status: boolean,
     addr: string,
     topics: string[],
+    port: number,
 };

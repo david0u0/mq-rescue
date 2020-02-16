@@ -21,7 +21,7 @@ function MQLabel(params: LabelParam): JSX.Element {
 export function MQHeader(): JSX.Element {
 	const { cur_site, setCurSite, all_site } = useContext(SiteCtx);
 	let cur_site_obj = all_site[cur_site];
-	let status_msg = `${cur_site_obj.addr} ${cur_site_obj.status ? '連線成功' : '連線失敗'}`;
+	let status_msg = `${cur_site_obj.addr}:${cur_site_obj.port} ${cur_site_obj.status ? '連線成功' : '連線失敗'}`;
 	return (
 		<div>
 			<div style={{ display: 'flex' }}>
