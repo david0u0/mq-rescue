@@ -1,16 +1,26 @@
 import * as mqtt from 'mqtt';
 import { SiteState } from './site_state';
 
+export enum ConnectState {
+	Wait,
+	Idle,
+	Connected,
+	Fail
+}
+
 type MsgHandler = (msg: string) => void;
 
 export class MyMQClient {
 	handlers: { [topic: string]: MsgHandler[] };
 	client: mqtt.MqttClient | null;
+	conn_state: ConnectState;
 	constructor(private site: SiteState) {
 		this.handlers = {};
 		this.client = null;
+		this.conn_state = ConnectState.Idle;
 	}
 	async connect(): Promise<void> {
+		this.conn_state = ConnectState.Wait;
 		this.client = mqtt.connect(this.site.addr, {
 			port: this.site.port,
 			clientId: 'mq-savior'
@@ -29,7 +39,12 @@ export class MyMQClient {
 		return new Promise((resolve, reject) => {
 			if (this.client) {
 				this.client.on('connect', () => {
+					this.conn_state = ConnectState.Connected;
 					resolve();
+				});
+				this.client.on('error', () => {
+					this.conn_state = ConnectState.Fail;
+					reject();
 				});
 			} else {
 				reject('client is null');
@@ -38,11 +53,15 @@ export class MyMQClient {
 	}
 	sub(topic: string, handler: MsgHandler): void {
 		if (this.client) {
-			if (typeof this.handlers[topic] == 'undefined') {
-				this.handlers[topic] = [];
-				this.client.subscribe(topic);
+			if (this.conn_state != ConnectState.Connected) {
+				if (typeof this.handlers[topic] == 'undefined') {
+					this.handlers[topic] = [];
+					this.client.subscribe(topic);
+				}
+				this.handlers[topic].push(handler);
+			} else {
+				throw 'client not connected';
 			}
-			this.handlers[topic].push(handler);
 		} else {
 			throw 'client is null';
 		}
