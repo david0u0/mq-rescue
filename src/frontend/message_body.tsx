@@ -22,9 +22,11 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
                 setCurState(client.conn_state);
                 for(let topic of params.site.topics) {
                     // TODO: 用一些厲害的函式庫優化底下這些厚重的複製！
-                    let new_msg_map = { ...msg_map };
-                    new_msg_map[topic] = [];
-                    setMsgMap(new_msg_map);
+                    setMsgMap(msg_map => {
+                        let new_msg_map = { ...msg_map };
+                        new_msg_map[topic] = [];
+                        return new_msg_map;
+                    });
                     // 註冊
                     client.sub(topic, msg => {
                         setMsgMap(msg_map => {
@@ -40,6 +42,9 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
             });
         }
     }, [is_selected, has_selected]);
+
+    console.log(cur_topic_name)
+    console.log(JSON.stringify(msg_map))
     
     if (!is_selected) {
         return null;
@@ -53,7 +58,6 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
                 msg_map[cur_topic_name].map((msg, i) => {
                     return <div key={i}>{msg}</div>;
                 })
-                //JSON.stringify(msg_map)
             }
 	    </div>;
     }
