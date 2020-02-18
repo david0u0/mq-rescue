@@ -28,7 +28,7 @@ function App(): JSX.Element {
 					<TopicBar />
 					{
 						all_site.map(site => {
-							return <MessageBody site={site} />
+							return <MessageBody site={site} key={site.name}/>
 						})
 					}
 				</div>

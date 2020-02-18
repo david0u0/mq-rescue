@@ -18,8 +18,13 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
                 // sub all topics
                 setReady(true);
                 setCurState(client.conn_state);
+                for(let topic of params.site.topics) {
+                    client.sub(topic, msg => {
+                        // TODO:
+                        console.log(msg)
+                    });
+                }
             }).catch(err => {
-                alert(JSON.stringify(err));
                 setCurState(client.conn_state);
             });
         }

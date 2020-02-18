@@ -5,11 +5,9 @@ import { SiteInfo, ConnectState } from '../core/site_info';
 type MsgHandler = (msg: string) => void;
 
 export class MyMQClient {
-	handlers: { [topic: string]: MsgHandler[] };
 	client: mqtt.MqttClient | null;
 	conn_state: ConnectState;
 	constructor(private site: SiteInfo) {
-		this.handlers = {};
 		this.client = null;
 		this.conn_state = ConnectState.Idle;
 	}
@@ -42,32 +40,20 @@ export class MyMQClient {
 				resolve()
 			});
 
-			// 註冊監聽函式
-			client.on('message', (topic, msg_buffer) => {
-				if (typeof this.handlers[topic] == 'undefined') {
-					throw `No such handler for topic ${topic} :(`;
-				} else {
-					let msg = msg_buffer.toString();
-					for (let handler of this.handlers[topic]) {
-						handler(msg);
-					}
-				}
-			});
 		})
 	}
-	sub(topic: string, handler: MsgHandler): void {
+	onMsg(handler: (topic: string, msg: string) => void) {
 		if (this.client) {
-			if (this.conn_state != ConnectState.Connected) {
-				if (typeof this.handlers[topic] == 'undefined') {
-					this.handlers[topic] = [];
-					this.client.subscribe(topic);
-				}
-				this.handlers[topic].push(handler);
-			} else {
-				throw 'client not connected';
-			}
+			this.client.on('message', (topic, msg) => {
+				handler(topic, msg.toString());
+			});
+		}
+	}
+	sub(topic: string) {
+		if (this.client) {
+			this.client.subscribe(topic);
 		} else {
-			throw 'client is null';
+			throw 'client is null!';
 		}
 	}
 }

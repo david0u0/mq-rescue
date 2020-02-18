@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT } from './ipc_main';
+import { onConnMQTT, sendMsg, onSubMQTT } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 
@@ -18,7 +18,7 @@ function createWindow(): void {
 		win = null;
 	});
 	win.setMenu(null);
-	// win.webContents.openDevTools()
+	win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow);
@@ -40,11 +40,19 @@ for (let site of sites) {
 	client_map[site.name] = new MyMQClient(site);
 }
 
-onConnMQTT(async (mqtt_name) => {
+onConnMQTT(async (sender, mqtt_name) => {
 	let client = client_map[mqtt_name];
 	if (client) {
 		try {
 			await client.connect();
+			// 收到任何訊息都往前端灌
+			client.onMsg((topic, msg) => {
+				sendMsg(sender, mqtt_name, { topic, msg });
+			});
+			// 一旦前端說要註冊什麼東西，就幫它註冊
+			onSubMQTT(mqtt_name, topic => {
+				client.sub(topic);
+			});
 		} catch(err) {
 			console.log(err);
 			throw err;
@@ -52,4 +60,4 @@ onConnMQTT(async (mqtt_name) => {
 	} else {
 		throw `找不到站點：${mqtt_name}`;
 	}
-})
+});
