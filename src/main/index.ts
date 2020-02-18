@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron';
+import { onConnMQTT } from './ipc_main';
 
 let win: null | BrowserWindow;
 
@@ -15,6 +16,7 @@ function createWindow(): void {
 		win = null;
 	});
 	win.setMenu(null);
+	// win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow);
@@ -28,3 +30,7 @@ app.on('activate', () => {
 		createWindow();
 	}
 });
+
+onConnMQTT(async (mqtt_name) => {
+	throw `${mqtt_name} is fucked!`;
+})

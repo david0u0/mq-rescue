@@ -4,7 +4,6 @@ import { MQHeader } from './mq_header';
 import { SiteState } from '../core/site_state';
 import { SiteCtx, MQClientCtx } from './context';
 import { TopicBar } from './topic_bar';
-import { MyMQClient } from './mqtt_util';
 import { MessageBody } from './message_body';
 
 let sites: SiteState[] = [
@@ -48,7 +47,7 @@ function App(): JSX.Element {
 				<MQHeader />
 				<div style={{ display: 'flex', flex: 1 }}>
 					<TopicBar />
-					<MessageBody is_selected={true} site={all_site[0]} />
+					<MessageBody site={all_site[0]} />
 				</div>
 			</div>
 		</SiteCtx.Provider>
