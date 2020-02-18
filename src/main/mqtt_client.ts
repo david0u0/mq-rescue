@@ -1,13 +1,5 @@
 import * as mqtt from 'mqtt';
-import { SiteState } from '../core/site_state';
-import { ipcMain } from 'electron';
-
-export enum ConnectState {
-	Wait,
-	Idle,
-	Connected,
-	Fail
-}
+import { SiteInfo, ConnectState } from '../core/site_info';
 
 type MsgHandler = (msg: string) => void;
 
@@ -15,7 +7,7 @@ export class MyMQClient {
 	handlers: { [topic: string]: MsgHandler[] };
 	client: mqtt.MqttClient | null;
 	conn_state: ConnectState;
-	constructor(private site: SiteState) {
+	constructor(private site: SiteInfo) {
 		this.handlers = {};
 		this.client = null;
 		this.conn_state = ConnectState.Idle;
