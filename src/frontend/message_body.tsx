@@ -7,8 +7,11 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
     let [has_selected, setHasSelected] = useState(false);
     let [ready, setReady] = useState(false);
     let [client, setClient] = useState(new MyMQClient(params.site));
-    const { cur_site, all_site, setCurState } = useContext(SiteCtx);
+    let [msg_map, setMsgMap] = useState<{ [topic: string]: string[] }>({})
+    const { cur_site, all_site, setCurState, cur_topics } = useContext(SiteCtx);
     const is_selected = (params.site === all_site[cur_site]);
+
+    let cur_topic_name = all_site[cur_site].topics[cur_topics[cur_site]];
 
     useEffect(() => {
         if (is_selected == true && !has_selected) {
@@ -16,14 +19,22 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
             setCurState(client.conn_state);
             client.connect().then(() => {
                 // sub all topics
-                setReady(true);
                 setCurState(client.conn_state);
                 for(let topic of params.site.topics) {
+                    // TODO: 用一些厲害的函式庫優化底下這些厚重的複製！
+                    let new_msg_map = { ...msg_map };
+                    new_msg_map[topic] = [];
+                    setMsgMap(new_msg_map);
+                    // 註冊
                     client.sub(topic, msg => {
-                        // TODO:
-                        console.log(msg)
+                        setMsgMap(msg_map => {
+                            let new_msg_map = { ...msg_map };
+                            new_msg_map[topic] = [...new_msg_map[topic], msg];
+                            return new_msg_map;
+                        });
                     });
                 }
+                setReady(true);
             }).catch(err => {
                 setCurState(client.conn_state);
             });
@@ -36,7 +47,14 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
         return <div className='message-body'/>;
     } else {
         return <div className='message-body'>
-            main body
+            <h3>{cur_topic_name}</h3>
+            <hr/>
+            {
+                msg_map[cur_topic_name].map((msg, i) => {
+                    return <div key={i}>{msg}</div>;
+                })
+                //JSON.stringify(msg_map)
+            }
 	    </div>;
     }
 }
