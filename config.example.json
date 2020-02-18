@@ -2,7 +2,10 @@
 	{
 		"name": "mq1",
 		"addr": "localhost",
-		"topics": ["hi", "electron"],
+		"topics": [
+			{"name": "hi", "proto_file": "foo.proto", "proto_type": "Foo" },
+			{"name": "electron", "proto_file": "bar.proto", "proto_type": "Bar" }
+		],
 		"port": 8887,
 		"ca_path": "../ssl/server.crt",
 		"cert_path": "../ssl/server.pem",

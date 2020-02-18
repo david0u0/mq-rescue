@@ -1,7 +1,7 @@
 export type SiteInfo = {
     name: string,
     addr: string,
-    topics: string[],
+    topics: { name: string, proto_file: string, proto_type: string }[],
     port: number,
     key_path: string,
     cert_path: string,

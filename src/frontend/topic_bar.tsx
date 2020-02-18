@@ -26,7 +26,7 @@ export function TopicBar(): JSX.Element {
 						let is_cur_topic = cur_topics[cur_site] == i;
 						let is_writing = (typeof writing != 'undefined') && writing == i;
 						return <TopicBlock key={cur_site * 1000 + i}
-							is_writing={is_writing} name={topic} is_cur_topic={is_cur_topic}
+							is_writing={is_writing} name={topic.name} is_cur_topic={is_cur_topic}
 							onClick={() => {
 								setCurTopic(i);
 							}}
@@ -36,7 +36,7 @@ export function TopicBar(): JSX.Element {
 								} else if (opt == SendOption.Cancel) {
 									setWriting(undefined);
 								} else {
-									pubMQTT(all_site[cur_site].name, { topic, msg })
+									pubMQTT(all_site[cur_site].name, { topic: topic.name, msg })
 								}
 							}}/>;
 					})
