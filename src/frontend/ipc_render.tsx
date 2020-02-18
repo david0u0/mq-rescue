@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Conn, OK, MsgResult, Sub, OnMsg } from '../core/ipc_interface';
+import { Conn, OK, MsgWithTopic, Sub, Msg, Pub } from '../core/ipc_interface';
 
 export function connMQTT(mqtt_name: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -14,12 +14,16 @@ export function connMQTT(mqtt_name: string): Promise<void> {
     });
 }
 
-export function onMsgMQTT(mqtt_name: string, handler: (res: MsgResult) => void) {
-    ipc.on(OnMsg(mqtt_name), (evt, result: MsgResult) => {
-        handler(result);
+export function onMsgMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) => void) {
+    ipc.on(Msg(mqtt_name), (evt, msg_topic: MsgWithTopic) => {
+        handler(msg_topic);
     });
 }
 
 export function subMQTT(mqtt_name: string, topic: string) {
     ipc.send(Sub(mqtt_name), topic);
+}
+
+export function pubMQTT(mqtt_name: string, msg_topic: MsgWithTopic) {
+    ipc.send(Pub(mqtt_name), msg_topic);
 }

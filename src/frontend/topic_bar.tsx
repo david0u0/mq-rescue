@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { SiteCtx } from './context';
+import { pubMQTT } from './ipc_render';
+// TODO: 把上述函式包進 mqtt client 中！
 
 enum SendOption {
 	Start,
@@ -34,8 +36,7 @@ export function TopicBar(): JSX.Element {
 								} else if (opt == SendOption.Cancel) {
 									setWriting(undefined);
 								} else {
-									alert(msg);
-									// TODO: 發送出去！
+									pubMQTT(all_site[cur_site].name, { topic, msg })
 								}
 							}}/>;
 					})

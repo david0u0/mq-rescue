@@ -56,4 +56,11 @@ export class MyMQClient {
 			throw 'client is null!';
 		}
 	}
+	pub(topic: string, msg: string) {
+		if (this.client) {
+			this.client.publish(topic, msg);
+		} else {
+			throw 'client is null!';
+		}
+	}
 }

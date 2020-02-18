@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, sendMsg, onSubMQTT } from './ipc_main';
+import { onConnMQTT, sendMsg, onSubMQTT, onPubMQTT } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 
@@ -18,7 +18,7 @@ function createWindow(): void {
 		win = null;
 	});
 	win.setMenu(null);
-	win.webContents.openDevTools()
+	// win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow);
@@ -52,6 +52,10 @@ onConnMQTT(async (sender, mqtt_name) => {
 			// 一旦前端說要註冊什麼東西，就幫它註冊
 			onSubMQTT(mqtt_name, topic => {
 				client.sub(topic);
+			});
+			//
+			onPubMQTT(mqtt_name, msg_topic => {
+				client.pub(msg_topic.topic, msg_topic.msg);
 			});
 		} catch(err) {
 			console.log(err);
