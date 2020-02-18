@@ -19,7 +19,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
                 setReady(true);
                 setCurState(client.conn_state);
             }).catch(err => {
-                alert(err);
+                alert(JSON.stringify(err));
                 setCurState(client.conn_state);
             });
         }

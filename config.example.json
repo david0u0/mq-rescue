@@ -3,18 +3,11 @@
 		"name": "mq1",
 		"addr": "localhost",
 		"topics": ["hi", "electron"],
-		"port": 8887
-	},
-	{
-		"name": "mq2 with a fuckin long name",
-		"addr": "localhost",
-		"topics": ["hello mq"],
-		"port": 8888
-	},
-	{
-		"name": "mq3",
-		"addr": "localhost",
-		"topics": ["yo", "protocol", "buffer"],
-		"port": 888
+		"port": 8887,
+		"ca_path": "../ssl/server.crt",
+		"cert_path": "../ssl/server.pem",
+		"key_path": "../ssl/server.key",
+		"username": "my-name",
+		"password": "my-password"
 	}
 ]

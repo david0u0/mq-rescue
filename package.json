@@ -1,5 +1,5 @@
 {
-  "name": "ptt-spider",
+  "name": "mqtt-savior",
   "version": "1.0.0",
   "description": "mqtt 救星",
   "main": "./dist/main/index.js",

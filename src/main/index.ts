@@ -1,5 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import { onConnMQTT } from './ipc_main';
+import { SiteInfo } from '../core/site_info';
+import { MyMQClient } from './mqtt_client';
 
 let win: null | BrowserWindow;
 
@@ -31,6 +33,23 @@ app.on('activate', () => {
 	}
 });
 
+
+let sites: SiteInfo[] = require('../../config.json');
+let client_map: { [name: string]: MyMQClient } = {};
+for (let site of sites) {
+	client_map[site.name] = new MyMQClient(site);
+}
+
 onConnMQTT(async (mqtt_name) => {
-	throw `${mqtt_name} is fucked!`;
+	let client = client_map[mqtt_name];
+	if (client) {
+		try {
+			await client.connect();
+		} catch(err) {
+			console.log(err);
+			throw err;
+		}
+	} else {
+		throw `找不到站點：${mqtt_name}`;
+	}
 })

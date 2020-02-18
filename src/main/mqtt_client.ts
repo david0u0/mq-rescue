@@ -1,4 +1,5 @@
 import * as mqtt from 'mqtt';
+import * as fs from 'fs';
 import { SiteInfo, ConnectState } from '../core/site_info';
 
 type MsgHandler = (msg: string) => void;
@@ -12,37 +13,47 @@ export class MyMQClient {
 		this.client = null;
 		this.conn_state = ConnectState.Idle;
 	}
-	async connect(): Promise<void> {
+	connect(): Promise<void> {
+		if (this.conn_state == ConnectState.Connected) {
+			// 早已連線
+			return Promise.resolve();
+		}
+		// 連線
 		this.conn_state = ConnectState.Wait;
-		this.client = mqtt.connect(this.site.addr, {
-			port: this.site.port,
-			clientId: 'mq-savior'
-			// TODO: 更多設置
-		});
-		this.client.on('message', (topic, msg_buffer) => {
-			if (typeof this.handlers[topic] == 'undefined') {
-				throw `No such handler for topic ${topic} :(`;
-			} else {
-				let msg = msg_buffer.toString();
-				for (let handler of this.handlers[topic]) {
-					handler(msg);
-				}
-			}
-		});
 		return new Promise((resolve, reject) => {
-			if (this.client) {
-				this.client.on('connect', () => {
-					this.conn_state = ConnectState.Connected;
-					resolve();
-				});
-				this.client.on('error', () => {
-					this.conn_state = ConnectState.Fail;
-					reject();
-				});
-			} else {
-				reject('client is null');
-			}
-		});
+			let client = this.client = mqtt.connect(this.site.addr, {
+				port: this.site.port,
+				clientId: 'mq-savior',
+				protocol: 'mqtts',
+				key: fs.readFileSync(this.site.key_path),
+				cert: fs.readFileSync(this.site.cert_path),
+				ca: fs.readFileSync(this.site.ca_path),
+				rejectUnauthorized: false,
+				username: this.site.username,
+				password: this.site.password,
+			});
+			// 註冊錯誤處理
+			client.on('error', err => {
+				this.conn_state = ConnectState.Fail;
+				reject(err);
+			});
+			client.on('connect', () => {
+				this.conn_state = ConnectState.Connected;
+				resolve()
+			});
+
+			// 註冊監聽函式
+			client.on('message', (topic, msg_buffer) => {
+				if (typeof this.handlers[topic] == 'undefined') {
+					throw `No such handler for topic ${topic} :(`;
+				} else {
+					let msg = msg_buffer.toString();
+					for (let handler of this.handlers[topic]) {
+						handler(msg);
+					}
+				}
+			});
+		})
 	}
 	sub(topic: string, handler: MsgHandler): void {
 		if (this.client) {
