@@ -1,7 +1,9 @@
+export type TopicInfo = { name: string, proto_file: string, proto_type: string };
+
 export type SiteInfo = {
     name: string,
     addr: string,
-    topics: { name: string, proto_file: string, proto_type: string }[],
+    topics: TopicInfo[],
     port: number,
     key_path: string,
     cert_path: string,

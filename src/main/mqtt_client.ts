@@ -7,7 +7,7 @@ type MsgHandler = (msg: string) => void;
 export class MyMQClient {
 	client: mqtt.MqttClient | null;
 	conn_state: ConnectState;
-	constructor(private site: SiteInfo) {
+	constructor(public site: SiteInfo) {
 		this.client = null;
 		this.conn_state = ConnectState.Idle;
 	}
