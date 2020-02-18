@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { MQHeader } from './mq_header';
-import { SiteState } from './site_state';
+import { SiteState } from '../core/site_state';
 import { SiteCtx, MQClientCtx } from './context';
 import { TopicBar } from './topic_bar';
 import { MyMQClient } from './mqtt_util';
+import { MessageBody } from './message_body';
 
 let sites: SiteState[] = [
 	{
@@ -34,7 +35,6 @@ function App(): JSX.Element {
 	const [cur_site, setCurSite] = useState(0);
 	const [all_site, setAllSite] = useState(sites);
 	const [cur_topics, setCurTopics] = useState(all_site.map(() => 0));
-	const mq_clients = all_site.map(site => new MyMQClient(site));
 
 	function setCurTopic(index: number): void {
 		let new_cur_topics = [...cur_topics];
@@ -46,14 +46,10 @@ function App(): JSX.Element {
 		<SiteCtx.Provider value={{ cur_site, setCurSite, all_site, setCurTopic, cur_topics }}>
 			<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
 				<MQHeader />
-				<MQClientCtx.Provider value={mq_clients[cur_site]}>
-					<div style={{ display: 'flex', flex: 1 }}>
-						<TopicBar />
-						<div className='main'>
-							main body
-						</div>
-					</div>
-				</MQClientCtx.Provider>
+				<div style={{ display: 'flex', flex: 1 }}>
+					<TopicBar />
+					<MessageBody is_selected={true} site={all_site[0]} />
+				</div>
 			</div>
 		</SiteCtx.Provider>
 	);

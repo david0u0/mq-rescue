@@ -2,10 +2,10 @@
   "name": "ptt-spider",
   "version": "1.0.0",
   "description": "mqtt 救星",
-  "main": "./dist/main.js",
+  "main": "./dist/main/index.js",
   "scripts": {
     "start": "tsc && webpack && electron .",
-    "check": "eslint main.ts src/  --ext .ts,.tsx --ignore-path .gitignore && tsc"
+    "check": "eslint src/  --ext .ts,.tsx --ignore-path .gitignore && tsc"
   },
   "author": "DavidYo",
   "license": "ISC",

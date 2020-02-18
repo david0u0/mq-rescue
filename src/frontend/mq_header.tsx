@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { SiteState } from './site_state';
+import { SiteState } from '../core/site_state';
 import { SiteCtx } from './context';
 
 type LabelParam = {

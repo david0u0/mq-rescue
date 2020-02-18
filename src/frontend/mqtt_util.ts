@@ -1,5 +1,6 @@
 import * as mqtt from 'mqtt';
-import { SiteState } from './site_state';
+import { SiteState } from '../core/site_state';
+import { ipcRenderer } from 'electron';
 
 export enum ConnectState {
 	Wait,

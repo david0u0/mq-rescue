@@ -1,5 +1,5 @@
 import React from 'react';
-import { SiteState } from './site_state';
+import { SiteState } from '../core/site_state';
 import { MyMQClient } from './mqtt_util';
 
 export const SiteCtx = React.createContext({
