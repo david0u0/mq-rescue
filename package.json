@@ -5,6 +5,7 @@
   "main": "./dist/main/index.js",
   "scripts": {
     "start": "tsc && webpack && electron .",
+    "debug": "MODE=debug npm start",
     "check": "eslint src/  --ext .ts,.tsx --ignore-path .gitignore && tsc"
   },
   "author": "DavidYo",

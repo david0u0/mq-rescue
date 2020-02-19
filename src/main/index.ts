@@ -4,6 +4,14 @@ import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
 
+let MODE: 'debug' | 'release' = (() => {
+	if (process.env.MODE == 'debug') {
+		return 'debug';
+	} else {
+		return 'release';
+	}
+})();
+
 let win: null | BrowserWindow;
 
 function createWindow(): void {
@@ -19,7 +27,9 @@ function createWindow(): void {
 		win = null;
 	});
 	win.setMenu(null);
-	win.webContents.openDevTools()
+	if (MODE == 'debug') {
+		win.webContents.openDevTools()
+	}
 }
 
 app.on('ready', createWindow);
