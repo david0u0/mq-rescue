@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import { onConnMQTT, sendMsg, onSubMQTT, onPubMQTT } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
-import { encode } from './proto_helper';
+import { encode, decode } from './proto_helper';
 
 let win: null | BrowserWindow;
 
@@ -47,9 +47,14 @@ onConnMQTT(async (sender, mqtt_name) => {
 		try {
 			await client.connect();
 			// 收到任何訊息都往前端灌
-			client.onMsg((topic, msg) => {
-				// TODO: protobuf
-				sendMsg(sender, mqtt_name, { topic, msg });
+			client.onMsg(async (topic_name, msg) => {
+				let cur_topic_info = client.site.topics.find(topic => topic.name == topic_name);
+				if (cur_topic_info) {
+					let msg_decoded = await decode(cur_topic_info, msg)
+					sendMsg(sender, mqtt_name, { topic: topic_name, msg: msg_decoded });
+				} else {
+					throw `找不到頻道：${topic_name}`;
+				}
 			});
 			// 一旦前端說要註冊什麼東西，就幫它註冊
 			onSubMQTT(mqtt_name, topic => {
@@ -57,7 +62,6 @@ onConnMQTT(async (sender, mqtt_name) => {
 			});
 			//
 			onPubMQTT(mqtt_name, async (msg_topic) => {
-				// TODO: protobuf
 				let cur_topic_info = client.site.topics.find(topic => topic.name == msg_topic.topic);
 				if (cur_topic_info) {
 					let msg_encoded = await encode(cur_topic_info, msg_topic.msg)
