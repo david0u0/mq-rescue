@@ -8,3 +8,9 @@
 npm i
 npm start
 ```
+
+## 待做 ##
+1. 真正的分頁機制
+2. MQTT wildcard 監聽
+3. 記憶上次打了什麼
+4. 更好的 UI
