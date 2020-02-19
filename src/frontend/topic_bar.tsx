@@ -30,13 +30,18 @@ export function TopicBar(): JSX.Element {
 							onClick={() => {
 								setCurTopic(i);
 							}}
-							onSendOption={(opt, msg) => {
+							onSendOption={async (opt, msg) => {
 								if (opt == SendOption.Start) {
 									setWriting(i);
 								} else if (opt == SendOption.Cancel) {
 									setWriting(undefined);
 								} else {
-									pubMQTT(all_site[cur_site].name, { topic: topic.name, msg })
+									// TODO: 這段期間禁止再次發送
+									try {
+										await pubMQTT(all_site[cur_site].name, { topic: topic.name, msg });
+									} catch(err) {
+										alert(`編碼失敗！${err}`);
+									}
 								}
 							}}/>;
 					})

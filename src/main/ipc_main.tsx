@@ -23,12 +23,14 @@ export function sendMsg(sender: any, mqtt_name: string, msg_topic: MsgWithTopic)
     sender.send(Msg(mqtt_name), msg_topic);
 }
 
-export function onPubMQTT(sender: any, mqtt_name: string, handler: (msg_topic: MsgWithTopic) => Promise<void>) {
+export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) => Promise<void>) {
     ipc.on(Pub(mqtt_name), async (evt: any, msg_topic: MsgWithTopic) => {
         try {
             await handler(msg_topic);
+            evt.sender.send(Pub(mqtt_name), OK);
         } catch(err) {
-            sender.send(Err, err);
+            evt.sender.send(Pub(mqtt_name), err);
+            console.log(err);
         }
     });
 }

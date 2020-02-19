@@ -56,13 +56,14 @@ onConnMQTT(async (sender, mqtt_name) => {
 				client.sub(topic);
 			});
 			//
-			onPubMQTT(sender, mqtt_name, async (msg_topic) => {
+			onPubMQTT(mqtt_name, async (msg_topic) => {
 				// TODO: protobuf
 				let cur_topic_info = client.site.topics.find(topic => topic.name == msg_topic.topic);
 				if (cur_topic_info) {
-					encode(cur_topic_info, msg_topic.msg).then(msg_encoded => {
-						client.pub(msg_topic.topic, msg_encoded);
-					});
+					let msg_encoded = await encode(cur_topic_info, msg_topic.msg)
+					client.pub(msg_topic.topic, msg_encoded);
+				} else {
+					throw `找不到頻道：${msg_topic.topic}`;
 				}
 			});
 		} catch(err) {
