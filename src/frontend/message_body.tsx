@@ -53,7 +53,11 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
             <hr/>
             {
                 msg_map[cur_topic.name].map((msg, i) => {
-                    return <div key={i}>{msg}</div>;
+                    // TODO: 顯示得好看一點
+                    return <div key={i}>
+                        <p>{msg}</p>
+                        <hr/>
+                    </div>;
                 })
             }
 	    </div>;

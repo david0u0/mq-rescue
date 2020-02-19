@@ -19,7 +19,7 @@ function createWindow(): void {
 		win = null;
 	});
 	win.setMenu(null);
-	// win.webContents.openDevTools()
+	win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow);

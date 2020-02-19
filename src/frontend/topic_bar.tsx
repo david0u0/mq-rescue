@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { SiteCtx } from './context';
 import { pubMQTT } from './ipc_render';
 // TODO: 把上述函式包進 mqtt client 中！
@@ -60,7 +60,7 @@ type TopicBlockParams = {
 };
 
 function TopicBlock(params: TopicBlockParams): JSX.Element {
-	const [message, setMessage] = useState(''); // TODO: 載入 protobuf 原型
+	const [message, setMessage] = useState('');
 	return <div onClick={params.onClick} style={{
 		backgroundColor: params.is_cur_topic ? '#85bffa' : 'inherit',
 		display: 'flex'
@@ -72,7 +72,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 				(() => {
 					if (params.is_writing) {
 						return <div>
-							<textarea className='send-message-area' value={message}
+							<textarea className='send-message-area' value={message} autoFocus
 								onChange={evt => setMessage(evt.target.value)}
 								onClick={evt => {
 									evt.stopPropagation();
