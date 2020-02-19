@@ -37,4 +37,5 @@
 
 .message-body{
     flex: 3;
+    overflow-y: scroll;
 }

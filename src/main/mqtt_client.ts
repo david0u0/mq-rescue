@@ -42,10 +42,10 @@ export class MyMQClient {
 
 		})
 	}
-	onMsg(handler: (topic: string, msg: string) => void) {
+	onMsg(handler: (topic: string, msg: Buffer) => void) {
 		if (this.client) {
 			this.client.on('message', (topic, msg) => {
-				handler(topic, msg.toString());
+				handler(topic, msg);
 			});
 		}
 	}
@@ -56,7 +56,7 @@ export class MyMQClient {
 			throw 'client is null!';
 		}
 	}
-	pub(topic: string, msg: string) {
+	pub(topic: string, msg: Buffer) {
 		if (this.client) {
 			this.client.publish(topic, msg);
 		} else {
