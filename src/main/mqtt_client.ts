@@ -19,7 +19,8 @@ export class MyMQClient {
 		// 連線
 		this.conn_state = ConnectState.Wait;
 		return new Promise((resolve, reject) => {
-			let client = this.client = mqtt.connect(this.site.addr, {
+			let client = this.client = mqtt.connect({
+				host: this.site.addr,
 				port: this.site.port,
 				clientId: 'mq-savior',
 				protocol: 'mqtts',
