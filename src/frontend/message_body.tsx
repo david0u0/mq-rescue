@@ -67,17 +67,42 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
             <hr/>
             <div style={{ overflowY: 'scroll', flex: 1 }}>
                 {
-                    msg_map[cur_topic.name].filter(msg => {
-                        return msg.indexOf(search_str) != -1;
-                    }).map((msg, i) => {
-                        // TODO: 顯示得好看一點
-                        return <div key={i}>
-                            <pre className="message-block">{msg}</pre>
-                            <hr />
-                        </div>;
+                    msg_map[cur_topic.name].map((msg, i) => {
+                        return <BoxWithHighlight msg={msg} search_str={search_str} key={i}/>;
                     })
                 }
             </div>
 	    </div>;
+    }
+}
+
+export function BoxWithHighlight(params: { msg: string, search_str: string }): JSX.Element {
+    // TODO: 顯示得好看一點
+    if (params.search_str == "") {
+        return <div>
+            <pre className="message-block">{params.msg}</pre>
+            <hr />
+        </div>;
+    } else {
+        let search_index = params.msg.indexOf(params.search_str);
+        if (search_index == -1) {
+            return null;
+        } else {
+            let inner: JSX.Element[] = [];
+            let remain_string = params.msg;
+            while (search_index != -1) {
+                inner.push(<span>{remain_string.substring(0, search_index)}</span>);
+                inner.push(<span className='highlight'>{params.search_str}</span>);
+                remain_string = remain_string.substring(search_index + params.search_str.length);
+                search_index = remain_string.indexOf(params.search_str);
+            }
+            inner.push(<span>{remain_string}</span>);
+            return <div>
+                <pre className="message-block">
+                    {inner}
+                </pre>
+                <hr />
+            </div>;
+        }
     }
 }

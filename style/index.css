@@ -48,3 +48,8 @@
     word-wrap: break-word;
     width: 100%;
 }
+
+.highlight {
+    color: red;
+    font-weight: bold;
+}
