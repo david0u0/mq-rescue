@@ -35,7 +35,14 @@
     width: 100%;
 }
 
-.message-body{
+.message-body {
     flex: 3;
     overflow-y: scroll;
+}
+
+.message-block {
+    display: inline-block;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    width: 100%;
 }

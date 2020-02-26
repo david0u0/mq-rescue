@@ -8,6 +8,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
     let [ready, setReady] = useState(false);
     let [client, setClient] = useState(new MyMQClient(params.site));
     let [msg_map, setMsgMap] = useState<{ [topic: string]: string[] }>({})
+    let [search_str, setSearchStr] = useState("");
     const { cur_site, all_site, setCurState, cur_topics } = useContext(SiteCtx);
     const is_selected = (params.site === all_site[cur_site]);
 
@@ -49,13 +50,19 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
         return <div className='message-body'/>;
     } else {
         return <div className='message-body'>
-            <h3>{cur_topic.name}</h3>
+            <div style={{ display: 'flex' }}>
+                <h2>{cur_topic.name}</h2>
+                <div style={{ flex: 1 }}/>
+                <input type="text" value={search_str} placeholder="搜尋" onChange={evt => setSearchStr(evt.currentTarget.value)}/>
+            </div>
             <hr/>
             {
-                msg_map[cur_topic.name].map((msg, i) => {
+                msg_map[cur_topic.name].filter(msg => {
+                    return msg.indexOf(search_str) != -1;
+                }).map((msg, i) => {
                     // TODO: 顯示得好看一點
                     return <div key={i}>
-                        <pre>{msg}</pre>
+                        <pre className="message-block">{msg}</pre>
                         <hr/>
                     </div>;
                 })
