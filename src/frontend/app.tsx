@@ -25,7 +25,11 @@ function App(): JSX.Element {
 			<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
 				<MQHeader />
 				<div style={{ display: 'flex', flex: 1 }}>
-					<TopicBar />
+					{
+						all_site.map(site => {
+							return <TopicBar site={site} key={site.name}/>
+						})
+					}
 					{
 						all_site.map(site => {
 							return <MessageBody site={site} key={site.name}/>
