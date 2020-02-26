@@ -44,6 +44,14 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
         }
     }, [is_selected, has_selected]);
 
+    let clearTopic = () => {
+        setMsgMap(msg_map => {
+            let new_map = { ...msg_map };
+            new_map[cur_topic.name] = []
+            return new_map;
+        });
+    };
+
     if (!is_selected) {
         return null;
     } else if (!ready) {
@@ -54,19 +62,22 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
                 <h2>{cur_topic.name}</h2>
                 <div style={{ flex: 1 }}/>
                 <input type="text" value={search_str} placeholder="搜尋" onChange={evt => setSearchStr(evt.currentTarget.value)}/>
+                <button onClick={() => clearTopic()}>清空頻道</button>
             </div>
             <hr/>
-            {
-                msg_map[cur_topic.name].filter(msg => {
-                    return msg.indexOf(search_str) != -1;
-                }).map((msg, i) => {
-                    // TODO: 顯示得好看一點
-                    return <div key={i}>
-                        <pre className="message-block">{msg}</pre>
-                        <hr/>
-                    </div>;
-                })
-            }
+            <div style={{ overflowY: 'scroll', flex: 1 }}>
+                {
+                    msg_map[cur_topic.name].filter(msg => {
+                        return msg.indexOf(search_str) != -1;
+                    }).map((msg, i) => {
+                        // TODO: 顯示得好看一點
+                        return <div key={i}>
+                            <pre className="message-block">{msg}</pre>
+                            <hr />
+                        </div>;
+                    })
+                }
+            </div>
 	    </div>;
     }
 }

@@ -37,7 +37,9 @@
 
 .message-body {
     flex: 3;
-    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .message-block {
