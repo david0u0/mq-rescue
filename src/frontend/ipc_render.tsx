@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Conn, OK, Switch, MsgWithTopic, Sub, Msg, Pub } from '../core/ipc_interface';
+import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub } from '../core/ipc_interface';
 
 export function connMQTT(mqtt_name: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -38,7 +38,15 @@ export function pubMQTT(mqtt_name: string, msg_topic: MsgWithTopic): Promise<voi
 }
 
 export function onSwitchPage(handler: (page: number) => void) {
-    ipc.on(Switch, (evt: any, page: number) => {
+    ipc.on(SwitchPage, (evt: any, page: number) => {
         handler(page);
+    });
+}
+export function clearSwitchTopic() {
+    ipc.removeAllListeners(SwitchTopic);
+}
+export function onSwitchTopic(handler: (is_up: boolean) => void) {
+    ipc.on(SwitchTopic, (evt: any, is_up: boolean) => {
+        handler(is_up);
     });
 }

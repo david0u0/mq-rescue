@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { SiteCtx } from './context';
-import { pubMQTT } from './ipc_render';
+import { pubMQTT, onSwitchTopic, clearSwitchTopic } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
 // TODO: 把上述函式包進 mqtt client 中！
 
@@ -15,6 +15,15 @@ export function TopicBar(params: { site: SiteInfo }): JSX.Element {
 	const topics = params.site.topics;
 	const [writing, setWriting] = useState<undefined | number>(undefined);
     const is_selected = (params.site === all_site[cur_site]);
+
+	clearSwitchTopic();
+	onSwitchTopic(is_up => {
+		let topic_len = all_site[cur_site].topics.length;
+		let new_cur_topic = cur_topics[cur_site] + (is_up ? -1 : 1);
+		new_cur_topic = (new_cur_topic + topic_len) % (topic_len);
+		setCurTopic(new_cur_topic);
+	});
+
 
 	return (
 		<div className='topic-bar' style={{ display: is_selected ? 'block' : 'none' }}>

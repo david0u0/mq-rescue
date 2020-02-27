@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT } from './ipc_main';
+import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
@@ -31,7 +31,7 @@ function createWindow(): void {
 	if (MODE == 'debug') {
 		win.webContents.openDevTools()
 	}
-
+	// 分頁熱鍵
 	let f_keys = ['F1','F2','F3','F4','F5','F6','F7']; // 應該沒人會開七個分頁吧……
 	for (let [i, key] of f_keys.entries()) {
 		electronLocalshortcut.register(win, key, (() => {
@@ -40,6 +40,17 @@ function createWindow(): void {
 			}
 		}));
 	}
+	// 切頻道熱鍵
+	electronLocalshortcut.register(win, 'Ctrl+Up', () => {
+		if (win != null) {
+			emitSwitchTopic(win.webContents, true);
+		}
+	});
+	electronLocalshortcut.register(win, 'Ctrl+Down', () => {
+		if (win != null) {
+			emitSwitchTopic(win.webContents, false);
+		}
+	});
 }
 
 app.on('ready', createWindow);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { MQHeader } from './mq_header';
 import { SiteInfo, ConnectState } from '../core/site_info';
@@ -21,11 +21,13 @@ function App(): JSX.Element {
 		setCurTopics(new_cur_topics);
 	}
 
-	onSwitchPage(page => {
-		if (page < all_site.length) {
-			setCurSite(page);
-		}
-	});
+	useEffect(() => {
+		onSwitchPage(page => {
+			if (page < all_site.length) {
+				setCurSite(page);
+			}
+		});
+	}, []);
 
 	return (
 		<SiteCtx.Provider value={{ cur_site, cur_state, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
