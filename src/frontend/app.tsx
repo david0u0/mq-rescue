@@ -33,7 +33,7 @@ function App(): JSX.Element {
 		<SiteCtx.Provider value={{ cur_site, cur_state, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
 			<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
 				<MQHeader />
-				<div style={{ display: 'flex', flex: 1 }}>
+				<div style={{ display: 'flex', flex: 1, width: '100%' }}>
 					{
 						all_site.map(site => {
 							return <TopicBar site={site} key={site.name}/>

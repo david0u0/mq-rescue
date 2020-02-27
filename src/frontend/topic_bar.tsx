@@ -71,7 +71,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 		display: 'flex'
 	}}>
 		<div style={{ flex: 1 }} />
-		<div style={{ flex: 8, paddingTop: '4px', paddingBottom: '4px' }}>
+		<div style={{ flex: 10, paddingTop: '4px', paddingBottom: '4px' }}>
 			<div>{params.name}</div>
 			{
 				(() => {

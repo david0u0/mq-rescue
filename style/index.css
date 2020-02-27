@@ -26,6 +26,9 @@
     border-right-color: gray;
     border-right-width: 2px;
     border-right-style: solid;
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
     flex: 1;
     overflow-y: scroll;
 }
@@ -45,6 +48,7 @@
 .message-block {
     display: inline-block;
     white-space: pre-wrap;
+    word-break: break-all;
     word-wrap: break-word;
     width: 100%;
 }
