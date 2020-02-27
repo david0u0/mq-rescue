@@ -1,8 +1,9 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, sendMsg, onSubMQTT, onPubMQTT } from './ipc_main';
+import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
+import * as electronLocalshortcut from 'electron-localshortcut';
 
 let MODE: 'debug' | 'release' = (() => {
 	if (process.env.MODE == 'debug') {
@@ -29,6 +30,15 @@ function createWindow(): void {
 	win.setMenu(null);
 	if (MODE == 'debug') {
 		win.webContents.openDevTools()
+	}
+
+	let f_keys = ['F1','F2','F3','F4','F5','F6','F7']; // 應該沒人會開七個分頁吧……
+	for (let [i, key] of f_keys.entries()) {
+		electronLocalshortcut.register(win, key, (() => {
+			if (win != null) {
+				emitSwitchPage(win.webContents, i);
+			}
+		}));
 	}
 }
 

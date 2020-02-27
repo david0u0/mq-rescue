@@ -1,7 +1,7 @@
-import { ipcMain as ipc } from 'electron';
-import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err } from '../core/ipc_interface';
+import { ipcMain as ipc, WebContents } from 'electron';
+import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err, Switch } from '../core/ipc_interface';
 
-export function onConnMQTT(handler: (sender: any, mqtt_name: string) => Promise<void>): void {
+export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => Promise<void>): void {
     ipc.on(Conn, async (evt: any, msg: string) => {
         let sender = evt.sender;
         try {
@@ -19,7 +19,7 @@ export function onSubMQTT(mqtt_name: string, handler: (topic: string) => void): 
     });
 }
 
-export function sendMsg(sender: any, mqtt_name: string, msg_topic: MsgWithTopic) {
+export function sendMsg(sender: WebContents, mqtt_name: string, msg_topic: MsgWithTopic) {
     sender.send(Msg(mqtt_name), msg_topic);
 }
 
@@ -33,4 +33,8 @@ export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) 
             console.log(err);
         }
     });
+}
+
+export function emitSwitchPage(sender: WebContents, page: number) {
+    sender.send(Switch, page);
 }

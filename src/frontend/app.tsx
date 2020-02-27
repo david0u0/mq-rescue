@@ -5,6 +5,7 @@ import { SiteInfo, ConnectState } from '../core/site_info';
 import { SiteCtx } from './context';
 import { TopicBar } from './topic_bar';
 import { MessageBody } from './message_body';
+import { onSwitchPage } from './ipc_render';
 
 let sites: SiteInfo[] = require('../../config.json');
 
@@ -19,6 +20,12 @@ function App(): JSX.Element {
 		new_cur_topics[cur_site] = index;
 		setCurTopics(new_cur_topics);
 	}
+
+	onSwitchPage(page => {
+		if (page < all_site.length) {
+			setCurSite(page);
+		}
+	});
 
 	return (
 		<SiteCtx.Provider value={{ cur_site, cur_state, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
