@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub, GetCache, SetCache } from '../core/ipc_interface';
+import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub, GetCache, SetCache, ToggleWriting } from '../core/ipc_interface';
 
 export function connMQTT(mqtt_name: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -60,4 +60,15 @@ export function onSwitchTopic(handler: (is_up: boolean) => void) {
     ipc.on(SwitchTopic, (evt: any, is_up: boolean) => {
         handler(is_up);
     });
+}
+
+// TODO: 改掉這醜惡的全域變數
+let toggleHandler: { [mqtt_name: string]: (() => void)} = { };
+ipc.on(ToggleWriting, () => {
+    for (let key of Object.keys(toggleHandler)) {
+        toggleHandler[key]();
+    }
+});
+export function onToggleWriting(mqtt_name: string, handler: () => void) {
+    toggleHandler[mqtt_name] = handler;
 }

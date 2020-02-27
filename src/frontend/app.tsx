@@ -5,7 +5,7 @@ import { SiteInfo, ConnectState } from '../core/site_info';
 import { SiteCtx } from './context';
 import { TopicBar } from './topic_bar';
 import { MessageBody } from './message_body';
-import { onSwitchPage } from './ipc_render';
+import { onSwitchPage, clearSwitchTopic, onSwitchTopic } from './ipc_render';
 
 let sites: SiteInfo[] = require('../../config.json');
 
@@ -28,6 +28,14 @@ function App(): JSX.Element {
 			}
 		});
 	}, []);
+
+	clearSwitchTopic();
+	onSwitchTopic(is_up => {
+		let topic_len = all_site[cur_site].topics.length;
+		let new_cur_topic = cur_topics[cur_site] + (is_up ? -1 : 1);
+		new_cur_topic = (new_cur_topic + topic_len) % (topic_len);
+		setCurTopic(new_cur_topic);
+	});
 
 	return (
 		<SiteCtx.Provider value={{ cur_site, cur_state, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>

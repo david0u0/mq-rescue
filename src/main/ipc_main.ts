@@ -1,5 +1,5 @@
 import { ipcMain as ipc, WebContents } from 'electron';
-import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err, SwitchPage, SwitchTopic, GetCache, SetCache } from '../core/ipc_interface';
+import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting } from '../core/ipc_interface';
 
 export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => Promise<void>): void {
     ipc.on(Conn, async (evt: any, mq_name: string) => {
@@ -56,4 +56,7 @@ export function emitSwitchPage(sender: WebContents, page: number) {
 }
 export function emitSwitchTopic(sender: WebContents, is_up: boolean) {
     sender.send(SwitchTopic, is_up);
+}
+export function emitToggleWriting(sender: WebContents) {
+    sender.send(ToggleWriting);
 }
