@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub } from '../core/ipc_interface';
+import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub, GetCache, SetCache } from '../core/ipc_interface';
 
 export function connMQTT(mqtt_name: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -12,6 +12,17 @@ export function connMQTT(mqtt_name: string): Promise<void> {
             }
         });
     });
+}
+export function getCaches(mqtt_name: string): Promise<{ [topic: string]: string }> {
+    return new Promise((resolve, reject) => {
+        ipc.send(GetCache, mqtt_name);
+        ipc.once(GetCache, (evt: any, msg_map: {[topic: string]: string}) => {
+            resolve(msg_map);
+        });
+    });
+}
+export function setCache(mqtt_name: string, msg_topic: MsgWithTopic) {
+    ipc.send(SetCache(mqtt_name), msg_topic);
 }
 
 export function onMsgMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) => void) {

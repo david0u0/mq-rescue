@@ -1,9 +1,10 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic } from './ipc_main';
+import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
+import { getCaches, storeCache } from './storage';
 
 let MODE: 'debug' | 'release' = (() => {
 	if (process.env.MODE == 'debug') {
@@ -76,6 +77,11 @@ onConnMQTT(async (sender, mqtt_name) => {
 	let client = client_map[mqtt_name];
 	if (client) {
 		try {
+			// 一旦前端說要存快取到本地端，就幫它存
+			onSetCache(mqtt_name, msg_topic => {
+				storeCache(mqtt_name, msg_topic.topic, msg_topic.msg);
+			});
+			// 實際連上
 			await client.connect();
 			// 收到任何訊息都往前端灌
 			client.onMsg(async (topic_name, msg) => {
@@ -91,7 +97,7 @@ onConnMQTT(async (sender, mqtt_name) => {
 			onSubMQTT(mqtt_name, topic => {
 				client.sub(topic);
 			});
-			//
+			// 一旦前端說要發送什麼東西，就幫它發送
 			onPubMQTT(mqtt_name, async (msg_topic) => {
 				let cur_topic_info = client.site.topics.find(topic => topic.name == msg_topic.topic);
 				if (cur_topic_info) {
@@ -110,3 +116,8 @@ onConnMQTT(async (sender, mqtt_name) => {
 	}
 });
 
+onGetCaches(async (sender, mqtt_name) => {
+	// 把存起來的訊息往前端灌
+	let msg_map = await getCaches(mqtt_name);
+	return msg_map;
+});

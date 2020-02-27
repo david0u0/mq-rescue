@@ -1,15 +1,31 @@
 import { ipcMain as ipc, WebContents } from 'electron';
-import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err, SwitchPage, SwitchTopic } from '../core/ipc_interface';
+import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err, SwitchPage, SwitchTopic, GetCache, SetCache } from '../core/ipc_interface';
 
 export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => Promise<void>): void {
-    ipc.on(Conn, async (evt: any, msg: string) => {
+    ipc.on(Conn, async (evt: any, mq_name: string) => {
         let sender = evt.sender;
         try {
-            await handler(sender, msg);
+            await handler(sender, mq_name);
             evt.sender.send(Conn, OK);
         } catch(err) {
             evt.sender.send(Conn, err);
         }
+    });
+}
+export function onGetCaches(handler: (sender: WebContents, mqtt_name: string) => Promise<{ [topic: string]: string }>): void {
+    ipc.on(GetCache, async (evt: any, mq_name: string) => {
+        let sender = evt.sender;
+        try {
+            let msg_map = await handler(sender, mq_name);
+            evt.sender.send(GetCache, msg_map);
+        } catch(err) {
+            evt.sender.send(GetCache, err);
+        }
+    });
+}
+export function onSetCache(mqtt_name: string, handler: (msg_topic: MsgWithTopic) => void): void {
+    ipc.on(SetCache(mqtt_name), (evt: any, msg_topic: MsgWithTopic) => {
+        handler(msg_topic);
     });
 }
 
@@ -38,7 +54,6 @@ export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) 
 export function emitSwitchPage(sender: WebContents, page: number) {
     sender.send(SwitchPage, page);
 }
-
 export function emitSwitchTopic(sender: WebContents, is_up: boolean) {
     sender.send(SwitchTopic, is_up);
 }
