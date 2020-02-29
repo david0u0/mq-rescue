@@ -44,12 +44,12 @@ function App(): JSX.Element {
 				<div style={{ display: 'flex', flex: 1, width: '100%' }}>
 					{
 						all_site.map(site => {
-							return <TopicBar site={site} key={site.name}/>
+							return <TopicBar site={site} key={site.name}/>;
 						})
 					}
 					{
 						all_site.map(site => {
-							return <MessageBody site={site} key={site.name}/>
+							return <MessageBody site={site} key={site.name}/>;
 						})
 					}
 				</div>

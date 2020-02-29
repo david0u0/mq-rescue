@@ -30,7 +30,7 @@ function createWindow(): void {
 	});
 	win.setMenu(null);
 	if (MODE == 'debug') {
-		win.webContents.openDevTools()
+		win.webContents.openDevTools();
 	}
 	// 分頁熱鍵
 	let f_keys = ['F1','F2','F3','F4','F5','F6','F7']; // 應該沒人會開七個分頁吧……
@@ -93,7 +93,7 @@ onConnMQTT(async (sender, mqtt_name) => {
 			client.onMsg(async (topic_name, msg) => {
 				let cur_topic_info = client.site.topics.find(topic => topic.name == topic_name);
 				if (cur_topic_info) {
-					let msg_decoded = await decode(cur_topic_info, msg)
+					let msg_decoded = await decode(cur_topic_info, msg);
 					sendMsg(sender, mqtt_name, { topic: topic_name, msg: msg_decoded });
 				} else {
 					throw `找不到頻道：${topic_name}`;
@@ -107,14 +107,14 @@ onConnMQTT(async (sender, mqtt_name) => {
 			onPubMQTT(mqtt_name, async (msg_topic) => {
 				let cur_topic_info = client.site.topics.find(topic => topic.name == msg_topic.topic);
 				if (cur_topic_info) {
-					let msg_encoded = await encode(cur_topic_info, msg_topic.msg)
+					let msg_encoded = await encode(cur_topic_info, msg_topic.msg);
 					client.pub(msg_topic.topic, msg_encoded);
 				} else {
 					throw `找不到頻道：${msg_topic.topic}`;
 				}
 			});
-		} catch(err) {
-			//console.log(err);
+		} catch (err) {
+			console.log(err);
 			throw err;
 		}
 	} else {

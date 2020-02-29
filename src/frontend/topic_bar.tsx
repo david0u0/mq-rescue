@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { SiteCtx } from './context';
 import { pubMQTT, getCaches, setCache, onToggleWriting } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
@@ -86,7 +86,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 	const [message, setMessage] = useState('');
 
 	useEffect(() => {
-		setMessage(params.default_msg)
+		setMessage(params.default_msg);
 	}, [params.default_msg]);
 
 	return <div onClick={params.onClick} style={{

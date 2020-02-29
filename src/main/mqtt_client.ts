@@ -38,10 +38,10 @@ export class MyMQClient {
 			});
 			client.on('connect', () => {
 				this.conn_state = ConnectState.Connected;
-				resolve()
+				resolve();
 			});
 
-		})
+		});
 	}
 	onMsg(handler: (topic: string, msg: Buffer) => void) {
 		if (this.client) {
