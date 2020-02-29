@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub, GetCache, SetCache, ToggleWriting } from '../core/ipc_interface';
+import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub, GetCache, SetCache, ToggleWriting, FireMessage } from '../core/ipc_interface';
 
 export function connMQTT(mqtt_name: string): Promise<void> {
 	return new Promise((resolve, reject) => {
@@ -71,4 +71,14 @@ ipc.on(ToggleWriting, () => {
 });
 export function onToggleWriting(mqtt_name: string, handler: () => void) {
 	toggleHandler[mqtt_name] = handler;
+}
+
+let fireMsgHandler: { [topic: string]: (() => void)} = { };
+ipc.on(FireMessage, () => {
+	for (let key of Object.keys(fireMsgHandler)) {
+		fireMsgHandler[key]();
+	}
+});
+export function onFireMessage(topic: string, handler: () => void): void {
+	fireMsgHandler[topic] = handler;
 }

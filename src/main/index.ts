@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting } from './ipc_main';
+import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting, emitFireMessage } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
@@ -56,6 +56,12 @@ function createWindow(): void {
 	electronLocalshortcut.register(win, 'Ctrl+X', () => {
 		if (win != null) {
 			emitToggleWriting(win.webContents);
+		}
+	});
+	// 熱鍵發送訊息
+	electronLocalshortcut.register(win, 'Ctrl+P', () => {
+		if (win != null) {
+			emitFireMessage(win.webContents);
 		}
 	});
 }

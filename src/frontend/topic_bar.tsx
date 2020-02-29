@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { SiteCtx } from './context';
-import { pubMQTT, getCaches, setCache, onToggleWriting } from './ipc_render';
+import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
 // TODO: 把上述函式包進 mqtt client 中！
 
@@ -88,6 +88,12 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 	useEffect(() => {
 		setMessage(params.default_msg);
 	}, [params.default_msg]);
+
+	onFireMessage(params.name, () => {
+		if (params.is_writing) {
+			params.onSendOption(SendOption.Send, message);
+		}
+	});
 
 	return <div onClick={params.onClick} style={{
 		backgroundColor: params.is_cur_topic ? '#85bffa' : 'inherit',

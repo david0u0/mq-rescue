@@ -1,5 +1,8 @@
 import { ipcMain as ipc, WebContents } from 'electron';
-import { Conn, OK, MsgWithTopic, Sub, Msg, Pub, Err, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting } from '../core/ipc_interface';
+import {
+	Conn, OK, MsgWithTopic, Sub, Msg, Pub,
+	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting
+} from '../core/ipc_interface';
 
 export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => Promise<void>): void {
 	ipc.on(Conn, async (evt: any, mq_name: string) => {
@@ -35,11 +38,11 @@ export function onSubMQTT(mqtt_name: string, handler: (topic: string) => void): 
 	});
 }
 
-export function sendMsg(sender: WebContents, mqtt_name: string, msg_topic: MsgWithTopic) {
+export function sendMsg(sender: WebContents, mqtt_name: string, msg_topic: MsgWithTopic): void {
 	sender.send(Msg(mqtt_name), msg_topic);
 }
 
-export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) => Promise<void>) {
+export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) => Promise<void>): void {
 	ipc.on(Pub(mqtt_name), async (evt: any, msg_topic: MsgWithTopic) => {
 		try {
 			await handler(msg_topic);
@@ -51,12 +54,15 @@ export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) 
 	});
 }
 
-export function emitSwitchPage(sender: WebContents, page: number) {
+export function emitSwitchPage(sender: WebContents, page: number): void {
 	sender.send(SwitchPage, page);
 }
-export function emitSwitchTopic(sender: WebContents, is_up: boolean) {
+export function emitSwitchTopic(sender: WebContents, is_up: boolean): void {
 	sender.send(SwitchTopic, is_up);
 }
-export function emitToggleWriting(sender: WebContents) {
+export function emitToggleWriting(sender: WebContents): void {
 	sender.send(ToggleWriting);
+}
+export function emitFireMessage(sender: WebContents): void {
+	sender.send(FireMessage);
 }
