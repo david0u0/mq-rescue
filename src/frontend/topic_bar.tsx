@@ -47,7 +47,7 @@ export function TopicBar(params: { site: SiteInfo }): JSX.Element {
 					let is_writing = (typeof writing != 'undefined') && writing == i;
 					return <TopicBlock key={topic.name}
 						default_msg={msg_map[topic.name]}
-						is_writing={is_writing} name={topic.name} is_cur_topic={is_cur_topic}
+						is_writing={is_writing && is_selected} name={topic.name} is_cur_topic={is_cur_topic}
 						onClick={() => {
 							setCurTopic(i);
 						}}
