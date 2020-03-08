@@ -15,7 +15,7 @@ npm run debug # 開啟開發者視窗
 npm run pack     # linux 版
 npm run pack-win # windows 版
 ```
-生成的執行檔存放於 `package/mq-savior-*` 中
+生成的執行檔將存放於 `package/mq-savior-*` 中。
 
 ## 設定檔管理 ##
 所有設定應存放於 `configs/` 資料夾中，不會進入版本控制。
@@ -23,6 +23,9 @@ npm run pack-win # windows 版
 讀取設定檔時，會從執行檔/原始碼的位置遞迴向上尋找包含 `configs/` 的資料夾，找到該資料夾後便認定其為專案根目錄（類似 .git 的運作方式）。設定檔中如欲使用相對路徑，請以專案根目錄為基準。
 
 具體作法請見 `configs/config.example.json`。
+
+> 需注意：執行打包程式後，設定檔也會複製一份至打包後的目錄（`package/mq-savior-*/configs`），因此修改專案設定檔 __不會__ 影響發行環境的設定。
+> 如此一來，開發環境與發行環境便不會互相汙染。
 
 ## 熱鍵表 ##
 * `F1~F7` 切分頁
