@@ -1,22 +1,12 @@
 import * as mqtt from 'mqtt';
 import * as fs from 'fs';
-import * as path from 'path';
 import { SiteInfo, ConnectState } from '../core/site_info';
-
-type MsgHandler = (msg: string) => void;
-
-function joinUnlessAbs(dir: string, file: string): string {
-	if (path.isAbsolute(file)) {
-		return file;
-	} else {
-		return path.join(dir, file);
-	}
-}
+import { joinPrjRoot } from './load_config';
 
 export class MyMQClient {
 	client: mqtt.MqttClient | null;
 	conn_state: ConnectState;
-	constructor(public root_dir: string, public site: SiteInfo) {
+	constructor(public site: SiteInfo) {
 		this.client = null;
 		this.conn_state = ConnectState.Idle;
 	}
@@ -33,9 +23,9 @@ export class MyMQClient {
 				port: this.site.port,
 				clientId: 'mq-savior',
 				protocol: 'mqtts',
-				key: fs.readFileSync(joinUnlessAbs(this.root_dir,this.site.key_path)),
-				cert: fs.readFileSync(joinUnlessAbs(this.root_dir, this.site.cert_path)),
-				ca: fs.readFileSync(joinUnlessAbs(this.root_dir, this.site.ca_path)),
+				key: fs.readFileSync(joinPrjRoot(this.site.key_path)),
+				cert: fs.readFileSync(joinPrjRoot(this.site.cert_path)),
+				ca: fs.readFileSync(joinPrjRoot(this.site.ca_path)),
 				rejectUnauthorized: false,
 				username: this.site.username,
 				password: this.site.password,

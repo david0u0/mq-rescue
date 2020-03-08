@@ -79,10 +79,10 @@ app.on('activate', () => {
 	}
 });
 
-let [root_dir, sites] = loadConfig();
+let sites = loadConfig();
 let client_map: { [name: string]: MyMQClient } = {};
 for (let site of sites) {
-	client_map[site.name] = new MyMQClient(root_dir, site);
+	client_map[site.name] = new MyMQClient(site);
 }
 
 // 將設定檔內容打到前端
