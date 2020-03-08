@@ -79,7 +79,7 @@ app.on('activate', () => {
 });
 
 
-let sites: SiteInfo[] = require('../../config.json');
+let sites: SiteInfo[] = require('../../configs/config.json');
 let client_map: { [name: string]: MyMQClient } = {};
 for (let site of sites) {
 	client_map[site.name] = new MyMQClient(site);

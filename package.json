@@ -6,7 +6,9 @@
   "scripts": {
     "start": "tsc && webpack && electron .",
     "debug": "MODE=debug npm start",
-    "check": "eslint src/  --ext .ts,.tsx --ignore-path .gitignore && tsc"
+    "check": "eslint src/  --ext .ts,.tsx --ignore-path .gitignore && tsc",
+    "pack": "electron-packager . mqtt-savior --overwrite --platform=linux --arch=x64 --asar --out package",
+    "pack-win": "electron-packager . mqtt-savior --overwrite --platform=win32 --arch=x64 --asar --out package"
   },
   "author": "DavidYo",
   "license": "ISC",
@@ -22,6 +24,7 @@
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "babel-loader": "^8.0.6",
+    "electron-packager": "^14.2.1",
     "eslint": "^6.0.1",
     "eslint-plugin-react": "^7.14.2",
     "typescript": "^3.5.3",

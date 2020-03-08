@@ -7,7 +7,7 @@ import { TopicBar } from './topic_bar';
 import { MessageBody } from './message_body';
 import { onSwitchPage, clearSwitchTopic, onSwitchTopic } from './ipc_render';
 
-let sites: SiteInfo[] = require('../../config.json');
+let sites: SiteInfo[] = require('../../configs/config.json');
 
 function App(): JSX.Element {
 	const [cur_site, setCurSite] = useState(0);
