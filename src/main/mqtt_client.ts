@@ -5,6 +5,14 @@ import { SiteInfo, ConnectState } from '../core/site_info';
 
 type MsgHandler = (msg: string) => void;
 
+function joinUnlessAbs(dir: string, file: string): string {
+	if (path.isAbsolute(file)) {
+		return file;
+	} else {
+		return path.join(dir, file);
+	}
+}
+
 export class MyMQClient {
 	client: mqtt.MqttClient | null;
 	conn_state: ConnectState;
@@ -25,9 +33,9 @@ export class MyMQClient {
 				port: this.site.port,
 				clientId: 'mq-savior',
 				protocol: 'mqtts',
-				key: fs.readFileSync(path.join(this.root_dir,this.site.key_path)),
-				cert: fs.readFileSync(path.join(this.root_dir, this.site.cert_path)),
-				ca: fs.readFileSync(path.join(this.root_dir, this.site.ca_path)),
+				key: fs.readFileSync(joinUnlessAbs(this.root_dir,this.site.key_path)),
+				cert: fs.readFileSync(joinUnlessAbs(this.root_dir, this.site.cert_path)),
+				ca: fs.readFileSync(joinUnlessAbs(this.root_dir, this.site.ca_path)),
 				rejectUnauthorized: false,
 				username: this.site.username,
 				password: this.site.password,
