@@ -1,11 +1,12 @@
 import { app, BrowserWindow } from 'electron';
 import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting, emitFireMessage, onAskConfig } from './ipc_main';
-import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
 import { getCaches, storeCache } from './storage';
 import { loadConfig } from './load_config';
+
+let sites = loadConfig();
 
 let MODE: 'debug' | 'release' = (() => {
 	if (process.env.MODE == 'debug') {
@@ -79,7 +80,6 @@ app.on('activate', () => {
 	}
 });
 
-let sites = loadConfig();
 let client_map: { [name: string]: MyMQClient } = {};
 for (let site of sites) {
 	client_map[site.name] = new MyMQClient(site);

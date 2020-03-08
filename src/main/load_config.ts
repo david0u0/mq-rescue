@@ -16,7 +16,12 @@ export function loadConfig(): SiteInfo[] {
             root_dir = cur_dir;
             return require(config_file);
         }
-        cur_dir = path.resolve(cur_dir, '..');
+        let parent_dir = path.resolve(cur_dir, '..');
+        if (parent_dir == cur_dir) {
+            throw new Error("找不到 configs/ 資料夾！");
+        } else {
+            cur_dir = parent_dir;
+        }
     }
 }
 
