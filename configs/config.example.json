@@ -3,13 +3,13 @@
 		"name": "mq1",
 		"addr": "localhost",
 		"topics": [
-			{"name": "hi", "proto_file": "protobuf/foo.proto", "proto_type": "Foo" },
-			{"name": "electron", "proto_file": "protobuf/bar.proto", "proto_type": "Bar" }
+			{"name": "hi", "proto_file": "configs/protobuf/foo.proto", "proto_type": "Foo" },
+			{"name": "electron", "proto_file": "configs/protobuf/bar.proto", "proto_type": "Bar" }
 		],
 		"port": 8887,
-		"ca_path": "../ssl/server.crt",
-		"cert_path": "../ssl/server.pem",
-		"key_path": "../ssl/server.key",
+		"ca_path": "configs/ssl/server.crt",
+		"cert_path": "configs/ssl/server.pem",
+		"key_path": "configs/ssl/server.key",
 		"username": "my-name",
 		"password": "my-password"
 	}

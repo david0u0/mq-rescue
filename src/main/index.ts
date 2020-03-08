@@ -1,10 +1,11 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting, emitFireMessage } from './ipc_main';
+import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting, emitFireMessage, onAskConfig } from './ipc_main';
 import { SiteInfo } from '../core/site_info';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
 import { getCaches, storeCache } from './storage';
+import { loadConfig } from './load_config';
 
 let MODE: 'debug' | 'release' = (() => {
 	if (process.env.MODE == 'debug') {
@@ -24,7 +25,6 @@ function createWindow(): void {
 			nodeIntegration: true,
 		}
 	});
-	win.loadFile('index.html');
 	win.on('closed', () => {
 		win = null;
 	});
@@ -32,6 +32,7 @@ function createWindow(): void {
 	if (MODE == 'debug') {
 		win.webContents.openDevTools();
 	}
+	win.loadFile('index.html');
 	// 分頁熱鍵
 	let f_keys = ['F1','F2','F3','F4','F5','F6','F7']; // 應該沒人會開七個分頁吧……
 	for (let [i, key] of f_keys.entries()) {
@@ -78,12 +79,16 @@ app.on('activate', () => {
 	}
 });
 
-
-let sites: SiteInfo[] = require('../../configs/config.json');
+let [root_dir, sites] = loadConfig();
 let client_map: { [name: string]: MyMQClient } = {};
 for (let site of sites) {
-	client_map[site.name] = new MyMQClient(site);
+	client_map[site.name] = new MyMQClient(root_dir, site);
 }
+
+// 將設定檔內容打到前端
+onAskConfig(() => {
+	return sites;
+});
 
 onConnMQTT(async (sender, mqtt_name) => {
 	let client = client_map[mqtt_name];
@@ -128,7 +133,7 @@ onConnMQTT(async (sender, mqtt_name) => {
 	}
 });
 
-onGetCaches(async (sender, mqtt_name) => {
+onGetCaches(async (mqtt_name) => {
 	// 把存起來的訊息往前端灌
 	let msg_map = await getCaches(mqtt_name);
 	return msg_map;

@@ -1,6 +1,18 @@
 import { ipcRenderer as ipc } from 'electron';
-import { Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub, GetCache, SetCache, ToggleWriting, FireMessage } from '../core/ipc_interface';
+import {
+	Config, Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub,
+	GetCache, SetCache, ToggleWriting, FireMessage
+} from '../core/ipc_interface';
+import { SiteInfo } from '../core/site_info';
 
+export function askConfig(): Promise<SiteInfo[]> {
+	return new Promise((resolve, reject) => {
+		ipc.send(Config);
+		ipc.once(Config, (evt: any, sites: SiteInfo[]) => {
+			resolve(sites);
+		});
+	});
+}
 export function connMQTT(mqtt_name: string): Promise<void> {
 	return new Promise((resolve, reject) => {
 		ipc.send(Conn, mqtt_name);

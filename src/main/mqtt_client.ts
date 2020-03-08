@@ -1,5 +1,6 @@
 import * as mqtt from 'mqtt';
 import * as fs from 'fs';
+import * as path from 'path';
 import { SiteInfo, ConnectState } from '../core/site_info';
 
 type MsgHandler = (msg: string) => void;
@@ -7,7 +8,7 @@ type MsgHandler = (msg: string) => void;
 export class MyMQClient {
 	client: mqtt.MqttClient | null;
 	conn_state: ConnectState;
-	constructor(public site: SiteInfo) {
+	constructor(public root_dir: string, public site: SiteInfo) {
 		this.client = null;
 		this.conn_state = ConnectState.Idle;
 	}
@@ -24,9 +25,9 @@ export class MyMQClient {
 				port: this.site.port,
 				clientId: 'mq-savior',
 				protocol: 'mqtts',
-				key: fs.readFileSync(this.site.key_path),
-				cert: fs.readFileSync(this.site.cert_path),
-				ca: fs.readFileSync(this.site.ca_path),
+				key: fs.readFileSync(path.join(this.root_dir,this.site.key_path)),
+				cert: fs.readFileSync(path.join(this.root_dir, this.site.cert_path)),
+				ca: fs.readFileSync(path.join(this.root_dir, this.site.ca_path)),
 				rejectUnauthorized: false,
 				username: this.site.username,
 				password: this.site.password,

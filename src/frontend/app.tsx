@@ -5,13 +5,11 @@ import { SiteInfo, ConnectState } from '../core/site_info';
 import { SiteCtx } from './context';
 import { TopicBar } from './topic_bar';
 import { MessageBody } from './message_body';
-import { onSwitchPage, clearSwitchTopic, onSwitchTopic } from './ipc_render';
-
-let sites: SiteInfo[] = require('../../configs/config.json');
+import { onSwitchPage, clearSwitchTopic, onSwitchTopic, askConfig } from './ipc_render';
 
 function App(): JSX.Element {
 	const [cur_site, setCurSite] = useState(0);
-	const [all_site, setAllSite] = useState(sites);
+	const [all_site, setAllSite] = useState([]);
 	const [cur_topics, setCurTopics] = useState(all_site.map(() => 0));
 	const [cur_state, setCurState] = useState(ConnectState.Idle);
 
@@ -27,6 +25,7 @@ function App(): JSX.Element {
 				setCurSite(page);
 			}
 		});
+		askConfig().then(sites => setAllSite(sites));
 	}, []);
 
 	clearSwitchTopic();
@@ -36,6 +35,10 @@ function App(): JSX.Element {
 		new_cur_topic = (new_cur_topic + topic_len) % (topic_len);
 		setCurTopic(new_cur_topic);
 	});
+
+	if (all_site.length == 0) {
+		return <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}/>;
+	}
 
 	return (
 		<SiteCtx.Provider value={{ cur_site, cur_state, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>

@@ -19,4 +19,3 @@ npm start
 * 暫時靜音某個頻道？
 * 未讀訊息提示
 * MQTT wildcard 監聽
-* 快捷鍵

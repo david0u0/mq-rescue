@@ -1,5 +1,6 @@
 export const OK = 'OK';
 export const GG = 'GG';
+export const Config = 'config'; // render: void, main: SiteInfo[]
 export const Conn = 'conn'; // rander: string (mqtt_name), main: "OK" / Error
 export const Err = 'err'; // Error
 export const SwitchPage = 'switch-page'; // number (which page)

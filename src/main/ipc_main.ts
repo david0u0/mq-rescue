@@ -1,9 +1,15 @@
 import { ipcMain as ipc, WebContents } from 'electron';
 import {
-	Conn, OK, MsgWithTopic, Sub, Msg, Pub,
-	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting
+	Config, Conn, OK, MsgWithTopic, Sub, Msg, Pub,
+	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting,
 } from '../core/ipc_interface';
+import { SiteInfo } from '../core/site_info';
 
+export function onAskConfig(handler: () => SiteInfo[]): void {
+	ipc.on(Config, (evt: any) => {
+		evt.sender.send(Config, handler());
+	});
+}
 export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => Promise<void>): void {
 	ipc.on(Conn, async (evt: any, mq_name: string) => {
 		let sender = evt.sender;
@@ -15,11 +21,10 @@ export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => 
 		}
 	});
 }
-export function onGetCaches(handler: (sender: WebContents, mqtt_name: string) => Promise<{ [topic: string]: string }>): void {
+export function onGetCaches(handler: (mqtt_name: string) => Promise<{ [topic: string]: string }>): void {
 	ipc.on(GetCache, async (evt: any, mq_name: string) => {
-		let sender = evt.sender;
 		try {
-			let msg_map = await handler(sender, mq_name);
+			let msg_map = await handler(mq_name);
 			evt.sender.send(GetCache, msg_map);
 		} catch (err) {
 			evt.sender.send(GetCache, err);
