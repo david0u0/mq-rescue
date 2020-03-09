@@ -9,8 +9,8 @@ import { onSwitchPage, clearSwitchTopic, onSwitchTopic, askConfig } from './ipc_
 
 function App(): JSX.Element {
 	const [cur_site, setCurSite] = useState(0);
-	const [all_site, setAllSite] = useState([]);
-	const [cur_topics, setCurTopics] = useState(all_site.map(() => 0));
+	const [all_site, setAllSite] = useState<SiteInfo[]>([]);
+	const [cur_topics, setCurTopics] = useState<number[]>([]);
 	const [cur_state, setCurState] = useState(ConnectState.Idle);
 
 	function setCurTopic(index: number): void {
@@ -25,7 +25,10 @@ function App(): JSX.Element {
 				setCurSite(page);
 			}
 		});
-		askConfig().then(sites => setAllSite(sites));
+		askConfig().then(sites => {
+			setAllSite(sites);
+			setCurTopics(sites.map(() => 0));
+		});
 	}, []);
 
 	clearSwitchTopic();
