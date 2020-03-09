@@ -5,7 +5,7 @@ import { SiteInfo, ConnectState } from '../core/site_info';
 import { SiteCtx } from './context';
 import { TopicBar } from './topic_bar';
 import { MessageBody } from './message_body';
-import { onSwitchPage, clearSwitchTopic, onSwitchTopic, askConfig } from './ipc_render';
+import { onSwitchPage, clearSwitchTopic, onSwitchTopic, askConfig, clearSwitchPage } from './ipc_render';
 
 function App(): JSX.Element {
 	const [cur_site, setCurSite] = useState(0);
@@ -20,17 +20,18 @@ function App(): JSX.Element {
 	}
 
 	useEffect(() => {
-		onSwitchPage(page => {
-			if (page < all_site.length) {
-				setCurSite(page);
-			}
-		});
 		askConfig().then(sites => {
 			setAllSite(sites);
 			setCurTopics(sites.map(() => 0));
 		});
 	}, []);
 
+	clearSwitchPage();
+	onSwitchPage(page => {
+		if (page < all_site.length) {
+			setCurSite(page);
+		}
+	});
 	clearSwitchTopic();
 	onSwitchTopic(is_up => {
 		let topic_len = all_site[cur_site].topics.length;

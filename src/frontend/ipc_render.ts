@@ -60,6 +60,9 @@ export function pubMQTT(mqtt_name: string, msg_topic: MsgWithTopic): Promise<voi
 	});
 }
 
+export function clearSwitchPage() {
+	ipc.removeAllListeners(SwitchPage);
+}
 export function onSwitchPage(handler: (page: number) => void) {
 	ipc.on(SwitchPage, (evt: any, page: number) => {
 		handler(page);
