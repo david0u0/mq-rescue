@@ -25,6 +25,17 @@ export function loadConfig(): SiteInfo[] {
     }
 }
 
+export function getPrjRoot(): string {
+    if (typeof root_dir == 'string') {
+        return root_dir;
+    } else {
+        throw new Error("找不到專案根目錄！");
+    }
+}
+export function getConfigPath(): string {
+    return joinPrjRoot('configs/');
+}
+
 export function joinPrjRoot(file: string): string {
     if (typeof root_dir == 'string') {
         if (path.isAbsolute(file)) {

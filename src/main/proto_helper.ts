@@ -1,6 +1,6 @@
 import { TopicInfo } from '../core/site_info';
 import { spawn } from 'child_process';
-import { joinPrjRoot } from './load_config';
+import { joinPrjRoot, getPrjRoot, getConfigPath } from './load_config';
 
 export async function encode(topic_info: TopicInfo, msg: string): Promise<Buffer> {
 	console.log(`開始編碼：${msg}`);
@@ -8,7 +8,7 @@ export async function encode(topic_info: TopicInfo, msg: string): Promise<Buffer
 	return new Promise((resolve, reject) => {
 		try {
 			let proto_file = joinPrjRoot(topic_info.proto_file);
-			let ls = spawn('protoc', [`--encode=${topic_info.proto_type}`, proto_file]);
+			let ls = spawn('protoc', [`--encode=${topic_info.proto_type}`, `--proto_path=${getConfigPath()}`, proto_file]);
 			ls.stdout.on('data', data => {
 				resolve(data);
 			});
@@ -35,7 +35,7 @@ export async function decode(topic_info: TopicInfo, msg: Buffer): Promise<string
 	return new Promise((resolve, reject) => {
 		try {
 			let proto_file = joinPrjRoot(topic_info.proto_file);
-			let ls = spawn('protoc', [`--decode=${topic_info.proto_type}`, proto_file]);
+			let ls = spawn('protoc', [`--decode=${topic_info.proto_type}`, `--proto_path=${getConfigPath()}`, proto_file]);
 			ls.stdout.on('data', data => {
 				resolve(data.toString());
 			});
