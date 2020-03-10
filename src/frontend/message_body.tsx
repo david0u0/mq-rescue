@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { MyMQClient } from './mqtt_client';
 import { SiteCtx } from './context';
-import { SiteInfo } from '../core/site_info';
+import { SiteInfo, ConnectState } from '../core/site_info';
 
 export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 	let [has_selected, setHasSelected] = useState(false);
@@ -17,7 +17,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 	useEffect(() => {
 		if (is_selected == true && !has_selected) {
 			setHasSelected(true);
-			setCurState(client.conn_state);
+			setCurState(ConnectState.Wait);
 			client.connect().then(() => {
 				// sub all topics
 				setCurState(client.conn_state);

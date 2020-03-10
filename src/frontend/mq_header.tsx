@@ -19,9 +19,9 @@ function MQLabel(params: LabelParam): JSX.Element {
 }
 
 export function MQHeader(): JSX.Element {
-	const { cur_site, setCurSite, all_site, cur_state } = useContext(SiteCtx);
+	const { cur_site, setCurSite, all_site, all_states } = useContext(SiteCtx);
 	let cur_site_obj = all_site[cur_site];
-	let status_msg = `${cur_site_obj.addr}:${cur_site_obj.port} ${cur_state}`;
+	let status_msg = `${cur_site_obj.addr}:${cur_site_obj.port} ${all_states[cur_site]}`;
 	return (
 		<div>
 			<div style={{ display: 'flex' }}>
