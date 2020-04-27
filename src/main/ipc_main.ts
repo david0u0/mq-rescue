@@ -1,11 +1,11 @@
 import { ipcMain as ipc, WebContents } from 'electron';
 import {
 	Config, Conn, OK, MsgWithTopic, Sub, Msg, Pub,
-	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting,
+	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting, ConfigFile,
 } from '../core/ipc_interface';
 import { SiteInfo } from '../core/site_info';
 
-export function onAskConfig(handler: () => SiteInfo[]): void {
+export function onAskConfig(handler: () => [string, SiteInfo[]]): void {
 	ipc.on(Config, (evt: any) => {
 		evt.sender.send(Config, handler());
 	});
@@ -18,6 +18,17 @@ export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => 
 			evt.sender.send(Conn, OK);
 		} catch (err) {
 			evt.sender.send(Conn, err);
+		}
+	});
+}
+export function onSetConfig(handler: (config_url: string) => Promise<void>): void {
+	ipc.on(ConfigFile, async (evt: any, config_url: string) => {
+		try {
+			handler(config_url);
+			evt.sender.send(ConfigFile, OK);
+		} catch (err) {
+			console.log(err);
+			evt.sender.send(ConfigFile, err);
 		}
 	});
 }

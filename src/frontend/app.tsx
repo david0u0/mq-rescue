@@ -25,7 +25,8 @@ function App(): JSX.Element {
 	}
 
 	useEffect(() => {
-		askConfig().then(sites => {
+		askConfig().then(dir_and_sites => {
+			const [config_dir, sites] = dir_and_sites; // TODO: 記憶設定檔資料夾
 			setAllSite(sites);
 			setCurTopics(sites.map(() => 0));
 			setAllStates(sites.map(() => ConnectState.Idle));

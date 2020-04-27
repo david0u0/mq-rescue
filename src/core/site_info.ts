@@ -1,4 +1,4 @@
-export type TopicInfo = { name: string, proto_file: string, proto_type: string };
+export type TopicInfo = { name: string, proto_file: string, proto_type: string } | { name: string };
 
 export type SiteInfo = {
     name: string,

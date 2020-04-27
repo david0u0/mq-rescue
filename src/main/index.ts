@@ -1,12 +1,12 @@
 import { app, BrowserWindow } from 'electron';
-import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting, emitFireMessage, onAskConfig } from './ipc_main';
+import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTopic, onGetCaches, onSetCache, emitToggleWriting, emitFireMessage, onAskConfig, onSetConfig } from './ipc_main';
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
 import { getCaches, storeCache } from './storage';
 import { loadConfig } from './load_config';
 
-let sites = loadConfig();
+let [config_dir, sites] = loadConfig();
 
 let MODE: 'debug' | 'release' = (() => {
 	if (process.env.MODE == 'debug') {
@@ -43,6 +43,7 @@ function createWindow(): void {
 			}
 		}));
 	}
+	electronLocalshortcut.unregisterAll(win);
 	// 切頻道熱鍵
 	electronLocalshortcut.register(win, 'Ctrl+Up', () => {
 		if (win != null) {
@@ -87,7 +88,19 @@ for (let site of sites) {
 
 // 將設定檔內容打到前端
 onAskConfig(() => {
-	return sites;
+	return [config_dir, sites];
+});
+
+// 更換設定檔
+onSetConfig(async config_url => {
+	if (win) {
+		console.log(config_url);
+		[config_dir, sites] = loadConfig(config_url);
+		console.log(config_dir);
+		console.log(sites);
+		win.close();
+		createWindow();
+	}
 });
 
 onConnMQTT(async (sender, mqtt_name) => {

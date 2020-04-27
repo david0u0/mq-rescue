@@ -1,15 +1,27 @@
 import { ipcRenderer as ipc } from 'electron';
 import {
 	Config, Conn, OK, SwitchPage, SwitchTopic, MsgWithTopic, Sub, Msg, Pub,
-	GetCache, SetCache, ToggleWriting, FireMessage
+	GetCache, SetCache, ToggleWriting, FireMessage, ConfigFile
 } from '../core/ipc_interface';
 import { SiteInfo } from '../core/site_info';
 
-export function askConfig(): Promise<SiteInfo[]> {
+export function askConfig(): Promise<[string, SiteInfo[]]> {
 	return new Promise((resolve, reject) => {
 		ipc.send(Config);
-		ipc.once(Config, (evt: any, sites: SiteInfo[]) => {
-			resolve(sites);
+		ipc.once(Config, (evt: any, dir_and_sites: [string, SiteInfo[]]) => {
+			resolve(dir_and_sites);
+		});
+	});
+}
+export function setConfigFile(file_url: string): Promise<void> {
+	return new Promise((resolve, reject) => {
+		ipc.send(ConfigFile);
+		ipc.once(ConfigFile, (evt: any, ret: any) => {
+			if (ret == OK) {
+				resolve();
+			} else {
+				reject(ret);
+			}
 		});
 	});
 }

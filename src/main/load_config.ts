@@ -7,15 +7,20 @@ let root_dir: null | string = null;
 /**
  * 遞迴向上尋找設定檔。一旦發現，即認定發現的位置是專案根目錄，並回傳設置
  */
-export function loadConfig(): SiteInfo[] {
+export function loadConfig(config_file?: string): [string, SiteInfo[]] {
+    if (config_file) {
+        root_dir = path.dirname(config_file);
+        return [root_dir, loadConfigFromFile(config_file)];
+    }
+
     let cur_dir = __dirname;
     while (true) {
         if (fs.existsSync(path.join(cur_dir, 'configs'))) {
             let config_file = path.join(cur_dir, 'configs', 'config.json');
-            console.log(`從 ${config_file} 讀取設定！`);
             root_dir = cur_dir;
-            return require(config_file);
+            return [root_dir, loadConfigFromFile(config_file)];
         }
+
         let parent_dir = path.resolve(cur_dir, '..');
         if (parent_dir == cur_dir) {
             throw new Error("找不到 configs/ 資料夾！");
@@ -23,6 +28,12 @@ export function loadConfig(): SiteInfo[] {
             cur_dir = parent_dir;
         }
     }
+}
+
+function loadConfigFromFile(config_file: string): SiteInfo[] {
+    // console.log(`從 ${config_file} 讀取設定！`);
+    console.log(` ${config_file} read file!`);
+    return require(config_file);
 }
 
 export function getPrjRoot(): string {
