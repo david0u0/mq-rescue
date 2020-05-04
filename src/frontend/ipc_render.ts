@@ -15,7 +15,7 @@ export function askConfig(): Promise<[string, SiteInfo[]]> {
 }
 export function setConfigFile(file_url: string): Promise<void> {
 	return new Promise((resolve, reject) => {
-		ipc.send(ConfigFile);
+		ipc.send(ConfigFile, file_url);
 		ipc.once(ConfigFile, (evt: any, ret: any) => {
 			if (ret == OK) {
 				resolve();

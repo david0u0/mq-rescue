@@ -24,11 +24,10 @@ export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => 
 export function onSetConfig(handler: (config_url: string) => Promise<void>): void {
 	ipc.on(ConfigFile, async (evt: any, config_url: string) => {
 		try {
-			handler(config_url);
+			await handler(config_url);
 			evt.sender.send(ConfigFile, OK);
 		} catch (err) {
-			console.log(err);
-			evt.sender.send(ConfigFile, err);
+			evt.sender.send(ConfigFile, err.message);
 		}
 	});
 }

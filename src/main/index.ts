@@ -18,8 +18,8 @@ let MODE: 'debug' | 'release' = (() => {
 
 let win: null | BrowserWindow;
 
-function createWindow(): void {
-	win = new BrowserWindow({
+function createWindow(): null | BrowserWindow {
+	let win: null | BrowserWindow = new BrowserWindow({
 		width: 1000,
 		height: 800,
 		webPreferences: {
@@ -34,6 +34,8 @@ function createWindow(): void {
 		win.webContents.openDevTools();
 	}
 	win.loadFile('index.html');
+	// 註銷所有熱鍵
+	electronLocalshortcut.unregisterAll(win);
 	// 分頁熱鍵
 	let f_keys = ['F1','F2','F3','F4','F5','F6','F7']; // 應該沒人會開七個分頁吧……
 	for (let [i, key] of f_keys.entries()) {
@@ -43,7 +45,6 @@ function createWindow(): void {
 			}
 		}));
 	}
-	electronLocalshortcut.unregisterAll(win);
 	// 切頻道熱鍵
 	electronLocalshortcut.register(win, 'Ctrl+Up', () => {
 		if (win != null) {
@@ -67,9 +68,10 @@ function createWindow(): void {
 			emitFireMessage(win.webContents);
 		}
 	});
+	return win;
 }
 
-app.on('ready', createWindow);
+app.on('ready', () => win = createWindow());
 app.on('window-all-closed', () => {
 	if (process.platform != 'darwin') {
 		app.quit();
@@ -77,7 +79,7 @@ app.on('window-all-closed', () => {
 });
 app.on('activate', () => {
 	if (win == null) {
-		createWindow();
+		win = createWindow();
 	}
 });
 
@@ -93,14 +95,13 @@ onAskConfig(() => {
 
 // 更換設定檔
 onSetConfig(async config_url => {
+	console.log(config_url);
+	[config_dir, sites] = loadConfig(config_url);
 	if (win) {
-		console.log(config_url);
-		[config_dir, sites] = loadConfig(config_url);
-		console.log(config_dir);
-		console.log(sites);
 		win.close();
-		createWindow();
+		win = createWindow();
 	}
+	console.log(win);
 });
 
 onConnMQTT(async (sender, mqtt_name) => {

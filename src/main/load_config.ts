@@ -9,7 +9,7 @@ let root_dir: null | string = null;
  */
 export function loadConfig(config_file?: string): [string, SiteInfo[]] {
     if (config_file) {
-        root_dir = path.dirname(config_file);
+        root_dir = path.resolve('..', path.dirname(config_file));
         return [root_dir, loadConfigFromFile(config_file)];
     }
 
@@ -31,9 +31,9 @@ export function loadConfig(config_file?: string): [string, SiteInfo[]] {
 }
 
 function loadConfigFromFile(config_file: string): SiteInfo[] {
-    // console.log(`從 ${config_file} 讀取設定！`);
-    console.log(` ${config_file} read file!`);
-    return require(config_file);
+    console.log(`從 ${config_file} 讀取設定！`);
+    const config_str = fs.readFileSync(config_file, { encoding: 'utf8' });
+    return JSON.parse(config_str);
 }
 
 export function getPrjRoot(): string {
