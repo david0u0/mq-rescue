@@ -53,14 +53,19 @@ export class MyMQClient {
 		if (this.client) {
 			this.client.subscribe(topic);
 		} else {
-			throw 'client is null!';
+			throw 'sub fail: client is null!';
 		}
 	}
 	pub(topic: string, msg: Buffer) {
 		if (this.client) {
 			this.client.publish(topic, msg);
 		} else {
-			throw 'client is null!';
+			throw 'pub fail: client is null!';
+		}
+	}
+	stop() {
+		if (this.client) {
+			this.client.end();
 		}
 	}
 }

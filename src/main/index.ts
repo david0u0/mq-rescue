@@ -3,7 +3,7 @@ import { onConnMQTT, emitSwitchPage, sendMsg, onSubMQTT, onPubMQTT, emitSwitchTo
 import { MyMQClient } from './mqtt_client';
 import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
-import { getCaches, storeCache } from './storage';
+import { getCaches, storeCache, storeConfigCache, getConfigCache } from './storage';
 import { loadConfig } from './load_config';
 
 let [config_dir, sites] = loadConfig();
@@ -71,21 +71,33 @@ function createWindow(): null | BrowserWindow {
 	return win;
 }
 
-app.on('ready', () => win = createWindow());
+app.on('ready', async () => {
+	let path = await getConfigCache();
+	try {
+		[config_dir, sites] = loadConfig(path);
+	} catch (err) {
+		// 為了避免設定檔壞掉導致永遠打不開
+		[config_dir, sites] = loadConfig();
+	}
+	restartMQTT();
+	win = createWindow();
+});
 app.on('window-all-closed', () => {
 	if (process.platform != 'darwin') {
 		app.quit();
 	}
 });
-app.on('activate', () => {
-	if (win == null) {
-		win = createWindow();
-	}
-});
 
 let client_map: { [name: string]: MyMQClient } = {};
-for (let site of sites) {
-	client_map[site.name] = new MyMQClient(site);
+
+function restartMQTT() {
+	for (let key of Object.keys(client_map)) {
+		client_map[key].stop();
+	}
+	client_map = {};
+	for (let site of sites) {
+		client_map[site.name] = new MyMQClient(site);
+	}
 }
 
 // 將設定檔內容打到前端
@@ -95,13 +107,13 @@ onAskConfig(() => {
 
 // 更換設定檔
 onSetConfig(async config_url => {
-	console.log(config_url);
 	[config_dir, sites] = loadConfig(config_url);
+	storeConfigCache(config_url);
 	if (win) {
 		win.close();
+		restartMQTT();
 		win = createWindow();
 	}
-	console.log(win);
 });
 
 onConnMQTT(async (sender, mqtt_name) => {

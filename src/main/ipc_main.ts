@@ -5,6 +5,16 @@ import {
 } from '../core/ipc_interface';
 import { SiteInfo } from '../core/site_info';
 
+function getMsg(obj: string | Error ): string {
+	if (typeof obj == 'string') {
+		return obj;
+	} else if ('message' in obj) {
+		return getMsg(obj.message);
+	} else {
+		return JSON.stringify(obj);
+	}
+}
+
 export function onAskConfig(handler: () => [string, SiteInfo[]]): void {
 	ipc.on(Config, (evt: any) => {
 		evt.sender.send(Config, handler());
@@ -27,7 +37,7 @@ export function onSetConfig(handler: (config_url: string) => Promise<void>): voi
 			await handler(config_url);
 			evt.sender.send(ConfigFile, OK);
 		} catch (err) {
-			evt.sender.send(ConfigFile, err.message);
+			evt.sender.send(ConfigFile, getMsg(err));
 		}
 	});
 }

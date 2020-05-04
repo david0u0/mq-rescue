@@ -9,7 +9,7 @@ let root_dir: null | string = null;
  */
 export function loadConfig(config_file?: string): [string, SiteInfo[]] {
     if (config_file) {
-        root_dir = path.resolve('..', path.dirname(config_file));
+        root_dir = path.resolve(path.dirname(config_file), '..');
         return [root_dir, loadConfigFromFile(config_file)];
     }
 

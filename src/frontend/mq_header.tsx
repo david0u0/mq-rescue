@@ -47,7 +47,7 @@ export function MQHeader(): JSX.Element {
 					{/* TODO: 幹掉下面這個警告 */}
 					<button onClick={() => ref_file.current.click()}>更換設定檔</button>
 					<input type="file" style={{ display: 'none' }} ref={ref_file} onChange={evt => {
-						setConfigFile(evt.currentTarget.files[0].path).catch(err => alert(err));
+						setConfigFile(evt.currentTarget.files[0].path).catch(err => alert(`讀檔失敗 ${err}`));
 					}}/>
 				</label>
 			</div>
