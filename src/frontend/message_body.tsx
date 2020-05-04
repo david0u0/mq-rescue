@@ -39,6 +39,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 				}
 				setReady(true);
 			}).catch(err => {
+				alert(err);
 				setCurState(client.conn_state);
 			});
 		}

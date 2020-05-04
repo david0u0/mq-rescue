@@ -1,9 +1,10 @@
 import { ipcMain as ipc, WebContents } from 'electron';
 import {
-	Config, Conn, OK, MsgWithTopic, Sub, Msg, Pub,
+	AskConfig, Conn, OK, MsgWithTopic, Sub, Msg, Pub,
 	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting, ConfigFile,
 } from '../core/ipc_interface';
 import { SiteInfo } from '../core/site_info';
+import { Config } from '../core/config';
 
 function getMsg(obj: string | Error ): string {
 	if (typeof obj == 'string') {
@@ -15,9 +16,9 @@ function getMsg(obj: string | Error ): string {
 	}
 }
 
-export function onAskConfig(handler: () => [string, SiteInfo[]]): void {
-	ipc.on(Config, (evt: any) => {
-		evt.sender.send(Config, handler());
+export function onAskConfig(handler: () => Config): void {
+	ipc.on(AskConfig, (evt: any) => {
+		evt.sender.send(AskConfig, handler());
 	});
 }
 export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => Promise<void>): void {
@@ -27,7 +28,7 @@ export function onConnMQTT(handler: (sender: WebContents, mqtt_name: string) => 
 			await handler(sender, mq_name);
 			evt.sender.send(Conn, OK);
 		} catch (err) {
-			evt.sender.send(Conn, err);
+			evt.sender.send(Conn, getMsg(err));
 		}
 	});
 }

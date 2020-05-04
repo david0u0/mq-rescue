@@ -1,16 +1,17 @@
 import { SiteInfo } from "../core/site_info";
 import * as path from "path";
 import * as fs from "fs";
+import { Config } from "../core/config";
 
 let root_dir: null | string = null;
 
 /**
  * 遞迴向上尋找設定檔。一旦發現，即認定發現的位置是專案根目錄，並回傳設置
  */
-export function loadConfig(config_file?: string): [string, SiteInfo[]] {
+export function loadConfig(config_file?: string): Config {
     if (config_file) {
         root_dir = path.resolve(path.dirname(config_file), '..');
-        return [root_dir, loadConfigFromFile(config_file)];
+        return { file_url: config_file, sites: loadConfigFromFile(config_file) };
     }
 
     let cur_dir = __dirname;
@@ -18,7 +19,7 @@ export function loadConfig(config_file?: string): [string, SiteInfo[]] {
         if (fs.existsSync(path.join(cur_dir, 'configs'))) {
             let config_file = path.join(cur_dir, 'configs', 'config.json');
             root_dir = cur_dir;
-            return [root_dir, loadConfigFromFile(config_file)];
+            return { file_url: config_file, sites: loadConfigFromFile(config_file) };
         }
 
         let parent_dir = path.resolve(cur_dir, '..');

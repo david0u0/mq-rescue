@@ -5,8 +5,13 @@ import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
 import { getCaches, storeCache, storeConfigCache, getConfigCache } from './storage';
 import { loadConfig } from './load_config';
+import { SiteInfo } from '../core/site_info';
+import { Config } from '../core/config';
 
-let [config_dir, sites] = loadConfig();
+let config: Config = {
+	file_url: undefined,
+	sites: []
+}
 
 let MODE: 'debug' | 'release' = (() => {
 	if (process.env.MODE == 'debug') {
@@ -72,12 +77,12 @@ function createWindow(): null | BrowserWindow {
 }
 
 app.on('ready', async () => {
-	let path = await getConfigCache();
+	let config_path = await getConfigCache();
 	try {
-		[config_dir, sites] = loadConfig(path);
+		config = loadConfig(config_path);
 	} catch (err) {
 		// 為了避免設定檔壞掉導致永遠打不開
-		[config_dir, sites] = loadConfig();
+		config = loadConfig();
 	}
 	restartMQTT();
 	win = createWindow();
@@ -95,20 +100,20 @@ function restartMQTT() {
 		client_map[key].stop();
 	}
 	client_map = {};
-	for (let site of sites) {
+	for (let site of config.sites) {
 		client_map[site.name] = new MyMQClient(site);
 	}
 }
 
 // 將設定檔內容打到前端
 onAskConfig(() => {
-	return [config_dir, sites];
+	return config;
 });
 
 // 更換設定檔
-onSetConfig(async config_url => {
-	[config_dir, sites] = loadConfig(config_url);
-	storeConfigCache(config_url);
+onSetConfig(async config_file => {
+	config = loadConfig(config_file);
+	storeConfigCache(config_file);
 	if (win) {
 		win.close();
 		restartMQTT();

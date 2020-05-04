@@ -25,8 +25,9 @@ function App(): JSX.Element {
 	}
 
 	useEffect(() => {
-		askConfig().then(dir_and_sites => {
-			const [config_dir, sites] = dir_and_sites; // TODO: 記憶設定檔資料夾
+		askConfig().then(config => {
+			const { file_url, sites } = config;
+			document.title = `MQTT 救星 - 全面升級你的 MQTT 體驗 - ${file_url}`;
 			setAllSite(sites);
 			setCurTopics(sites.map(() => 0));
 			setAllStates(sites.map(() => ConnectState.Idle));
