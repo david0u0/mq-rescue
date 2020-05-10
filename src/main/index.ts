@@ -7,6 +7,7 @@ import { getCaches, storeCache, storeConfigCache, getConfigCache } from './stora
 import { loadConfig } from './load_config';
 import { SiteInfo } from '../core/site_info';
 import { Config } from '../core/config';
+import { mqttMatchTopic } from '../core/util';
 
 let config: Config = {
 	file_url: undefined,
@@ -133,13 +134,14 @@ onConnMQTT(async (sender, mqtt_name) => {
 			await client.connect();
 			// 收到任何訊息都往前端灌
 			client.onMsg(async (topic_name, msg) => {
-				let cur_topic_info = client.site.topics.find(topic => topic.name == topic_name);
-				if (cur_topic_info) {
-					let msg_decoded = await decode(cur_topic_info, msg);
-					sendMsg(sender, mqtt_name, { topic: topic_name, msg: msg_decoded });
-				} else {
-					throw `找不到頻道：${topic_name}`;
+				for (const topic_info of client.site.topics) {
+					if (mqttMatchTopic(topic_info.name, topic_name)) {
+						let msg_decoded = await decode(topic_info, msg);
+						sendMsg(sender, mqtt_name, { topic: topic_name, msg: msg_decoded });
+						return;
+					}
 				}
+				throw `找不到頻道：${topic_name}`;
 			});
 			// 一旦前端說要註冊什麼東西，就幫它註冊
 			onSubMQTT(mqtt_name, topic => {
