@@ -11,3 +11,13 @@ export function mqttMatchTopic(filter: string, topic: string): boolean {
 
 	return filter_array.length === topic_array.length
 }
+
+export function filterHasWildcard(filter: string): boolean {
+	if (filter.indexOf('#') != -1) {
+		return true;
+	}
+	if (filter.indexOf('+') != -1) {
+		return true;
+	}
+	return false;
+}

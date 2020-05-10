@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { SiteCtx } from './context';
 import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
+import { filterHasWildcard } from '../core/util';
 // TODO: 把上述函式包進 mqtt client 中！
 
 enum SendOption {
@@ -104,6 +105,9 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 			<div>{params.name}</div>
 			{
 				(() => {
+					if (filterHasWildcard(params.name)) {
+						return null;
+					}
 					if (params.is_writing) {
 						return <div>
 							<textarea className='send-message-area' value={message} autoFocus

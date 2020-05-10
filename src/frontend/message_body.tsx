@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { MyMQClient } from './mqtt_client';
 import { SiteCtx } from './context';
 import { SiteInfo, ConnectState } from '../core/site_info';
+import { filterHasWildcard } from '../core/util';
 
 export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 	let [has_selected, setHasSelected] = useState(false);
@@ -29,8 +30,12 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 						return new_msg_map;
 					});
 					// 註冊
-					client.sub(topic.name, msg => {
+					client.sub(topic.name, (topic_str, msg) => {
 						setMsgMap(msg_map => {
+							if (filterHasWildcard(topic.name)) {
+								// 補上主題名字
+								msg = topic_str + '\n--------\n' + msg;
+							}
 							let new_msg_map = { ...msg_map };
 							new_msg_map[topic.name] = [...new_msg_map[topic.name], msg];
 							return new_msg_map;
