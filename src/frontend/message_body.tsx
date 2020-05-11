@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Map, List } from 'immutable';
 import { MyMQClient } from './mqtt_client';
 import { SiteCtx } from './context';
 import { SiteInfo, ConnectState } from '../core/site_info';
@@ -8,7 +9,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 	let [has_selected, setHasSelected] = useState(false);
 	let [ready, setReady] = useState(false);
 	let [client, setClient] = useState(new MyMQClient(params.site));
-	let [msg_map, setMsgMap] = useState<{ [topic: string]: string[] }>({});
+	let [msg_map, setMsgMap] = useState<Map<string, List<string>>>(Map({}));
 	let [search_str, setSearchStr] = useState('');
 	const { cur_site, all_site, setCurState, cur_topics } = useContext(SiteCtx);
 	const is_selected = (params.site === all_site[cur_site]);
@@ -25,9 +26,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 				for (let topic of params.site.topics) {
 					// TODO: 用一些厲害的函式庫優化底下這些厚重的複製！
 					setMsgMap(msg_map => {
-						let new_msg_map = { ...msg_map };
-						new_msg_map[topic.name] = [];
-						return new_msg_map;
+						return msg_map.set(topic.name, List([]))
 					});
 					// 註冊
 					client.sub(topic.name, (topic_str, msg) => {
@@ -36,9 +35,8 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 								// 補上主題名字
 								msg = topic_str + '\n--------\n' + msg;
 							}
-							let new_msg_map = { ...msg_map };
-							new_msg_map[topic.name] = [...new_msg_map[topic.name], msg];
-							return new_msg_map;
+							let list = msg_map.get(topic.name).push(msg);
+							return msg_map.set(topic.name, list);
 						});
 					});
 				}
@@ -52,9 +50,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 
 	let clearTopic = () => {
 		setMsgMap(msg_map => {
-			let new_map = { ...msg_map };
-			new_map[cur_topic.name] = [];
-			return new_map;
+			return msg_map.set(cur_topic.name, List([]));
 		});
 	};
 
@@ -73,7 +69,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 			<hr/>
 			<div style={{ overflowY: 'scroll', flex: 1 }}>
 				{
-					msg_map[cur_topic.name].map((msg, i) => {
+					msg_map.get(cur_topic.name).map((msg, i) => {
 						return <BoxWithHighlight msg={msg} search_str={search_str} key={i}/>;
 					})
 				}

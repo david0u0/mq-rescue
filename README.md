@@ -36,4 +36,4 @@ npm run pack-win # windows 版
 ## 待做 ##
 * 暫時靜音某個頻道？
 * 未讀訊息提示
-* MQTT wildcard 監聽
+* 腳本……？
