@@ -100,6 +100,7 @@ export function onToggleWriting(mqtt_name: string, handler: () => void) {
 	toggleHandler[mqtt_name] = handler;
 }
 
+// TODO: 改掉這醜惡的全域變數
 let fireMsgHandler: { [topic: string]: (() => void)} = { };
 ipc.on(FireMessage, () => {
 	for (let key of Object.keys(fireMsgHandler)) {

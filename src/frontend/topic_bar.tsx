@@ -1,6 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { SiteCtx } from './context';
-import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage } from './ipc_render';
+import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage, onMsgMQTT } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
 import { filterHasWildcard } from '../core/util';
 // TODO: 把上述函式包進 mqtt client 中！
@@ -46,9 +46,10 @@ export function TopicBar(params: { site: SiteInfo }): JSX.Element {
 				topics.map((topic, i) => {
 					let is_cur_topic = cur_topics[cur_site] == i;
 					let is_writing = (typeof writing != 'undefined') && writing == i;
-					return <TopicBlock key={topic.name}
+					return <TopicBlock key={`${params.site.name}/${topic.name}`}
 						default_msg={msg_map[topic.name]}
 						is_writing={is_writing && is_selected} name={topic.name} is_cur_topic={is_cur_topic}
+						site={params.site}
 						onClick={() => {
 							setCurTopic(i);
 						}}
@@ -76,6 +77,7 @@ export function TopicBar(params: { site: SiteInfo }): JSX.Element {
 
 type TopicBlockParams = {
 	name: string,
+	site: SiteInfo,
 	is_writing: boolean,
 	is_cur_topic: boolean,
 	default_msg: string,
@@ -85,10 +87,28 @@ type TopicBlockParams = {
 
 function TopicBlock(params: TopicBlockParams): JSX.Element {
 	const [message, setMessage] = useState('');
+	const [unread, setUnread] = useState(0);
+	const latestIsCurTopic = useRef(params.is_cur_topic);
 
 	useEffect(() => {
 		setMessage(params.default_msg);
 	}, [params.default_msg]);
+
+	useEffect(() => {
+		if (params.is_cur_topic) {
+			setUnread(0);
+		}
+	}, [params.is_cur_topic]);
+
+	useEffect(() => {
+		onMsgMQTT(params.site.name, ({ topic }) => {
+			if (!latestIsCurTopic.current && topic == params.name) {
+				setUnread(unread => unread + 1);
+			}
+		});
+		// FIXME: 沒有清理函式，可能會有記憶體危機
+	}, []);
+
 
 	onFireMessage(params.name, () => {
 		if (params.is_writing) {
@@ -102,7 +122,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 	}}>
 		<div style={{ flex: 1 }} />
 		<div style={{ flex: 10, paddingTop: '4px', paddingBottom: '4px' }}>
-			<div>{params.name}</div>
+			<div>{params.name} <span className='unread'>{unread}</span></div>
 			{
 				(() => {
 					if (filterHasWildcard(params.name)) {

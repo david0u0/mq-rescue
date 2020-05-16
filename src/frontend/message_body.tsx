@@ -24,7 +24,6 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 				// sub all topics
 				setCurState(client.conn_state);
 				for (let topic of params.site.topics) {
-					// TODO: 用一些厲害的函式庫優化底下這些厚重的複製！
 					setMsgMap(msg_map => {
 						return msg_map.set(topic.name, List([]))
 					});

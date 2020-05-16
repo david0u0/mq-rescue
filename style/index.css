@@ -57,3 +57,11 @@
     color: red;
     font-weight: bold;
 }
+
+.unread {
+    display: inline-block;
+    padding-left: 3px;
+    padding-right: 3px;
+    background-color: pink;
+    border-radius: 3px;
+}
