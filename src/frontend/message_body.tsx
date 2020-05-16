@@ -70,7 +70,7 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 			<div style={{ overflowY: 'scroll', flex: 1 }}>
 				{
 					msg_map.get(cur_topic.name).map((msg, i) => {
-						return <BoxWithHighlight msg={msg} search_str={search_str} key={i}/>;
+						return <BoxWithHighlight msg={msg} search_str={search_str} key={`${cur_topic.name}/${i}`}/>;
 					})
 				}
 			</div>
