@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { SiteCtx } from './context';
 import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage, onMsgMQTT } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
@@ -88,7 +88,6 @@ type TopicBlockParams = {
 function TopicBlock(params: TopicBlockParams): JSX.Element {
 	const [message, setMessage] = useState('');
 	const [unread, setUnread] = useState(0);
-	const latestIsCurTopic = useRef(params.is_cur_topic);
 
 	useEffect(() => {
 		setMessage(params.default_msg);
@@ -102,7 +101,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 
 	useEffect(() => {
 		onMsgMQTT(params.site.name, ({ topic }) => {
-			if (!latestIsCurTopic.current && topic == params.name) {
+			if (topic == params.name) {
 				setUnread(unread => unread + 1);
 			}
 		});
@@ -122,7 +121,10 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 	}}>
 		<div style={{ flex: 1 }} />
 		<div style={{ flex: 10, paddingTop: '4px', paddingBottom: '4px' }}>
-			<div>{params.name} <span className='unread'>{unread}</span></div>
+			<div>
+				{params.name}
+				{ unread > 0 ? <span className='unread'>{unread}</span> : null }
+			</div>
 			{
 				(() => {
 					if (filterHasWildcard(params.name)) {
