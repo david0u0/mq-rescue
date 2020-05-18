@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { SiteCtx } from './context';
 import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage, onMsgMQTT } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
-import { filterHasWildcard } from '../core/util';
+import { filterHasWildcard, mqttMatchTopic } from '../core/util';
 // TODO: 把上述函式包進 mqtt client 中！
 
 enum SendOption {
@@ -101,7 +101,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 
 	useEffect(() => {
 		onMsgMQTT(params.site.name, ({ topic }) => {
-			if (topic == params.name) {
+			if (mqttMatchTopic(params.name, topic)) {
 				setUnread(unread => unread + 1);
 			}
 		});

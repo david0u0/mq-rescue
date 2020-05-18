@@ -7,8 +7,7 @@
     "start": "tsc && webpack && electron .",
     "debug": "MODE=debug npm start",
     "check": "eslint src/  --ext .ts,.tsx --ignore-path .gitignore && tsc",
-    "pack": "sh packager.sh linux",
-    "pack-win": "sh packager.sh win32"
+    "pack": "bash packager.sh"
   },
   "author": "DavidYo",
   "license": "ISC",
