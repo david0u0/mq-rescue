@@ -1,5 +1,4 @@
 import { SiteInfo, ConnectState } from '../core/site_info';
-import { mqttMatchTopic } from '../core/util';
 import { connMQTT, onMsgMQTT, subMQTT } from './ipc_render';
 
 type MsgHandler = (topic: string, msg: string) => void;
@@ -19,7 +18,7 @@ export class MyMQClient {
 			onMsgMQTT(this.site.name, result => {
 				const { topic, msg } = result;
 				for (let filter of Object.keys(this.handlers)) {
-					if (mqttMatchTopic(filter, topic)) {
+					if (filter == topic) {
 						for (let handler of this.handlers[filter]) {
 							handler(topic, msg);
 						}

@@ -136,12 +136,12 @@ onConnMQTT(async (sender, mqtt_name) => {
 			client.onMsg(async (topic_name, msg) => {
 				for (const topic_info of client.site.topics) {
 					if (mqttMatchTopic(topic_info.name, topic_name)) {
-						let msg_decoded = await decode(topic_info, msg);
-						sendMsg(sender, mqtt_name, { topic: topic_name, msg: msg_decoded });
-						return;
+						try {
+							let msg_decoded = await decode(topic_info, msg);
+							sendMsg(sender, mqtt_name, { topic: topic_info.name, msg: msg_decoded });
+						} catch { }
 					}
 				}
-				throw `找不到頻道：${topic_name}`;
 			});
 			// 一旦前端說要註冊什麼東西，就幫它註冊
 			onSubMQTT(mqtt_name, topic => {
@@ -154,7 +154,7 @@ onConnMQTT(async (sender, mqtt_name) => {
 					let msg_encoded = await encode(cur_topic_info, msg_topic.msg);
 					client.pub(msg_topic.topic, msg_encoded);
 				} else {
-					throw `找不到頻道：${msg_topic.topic}`;
+					throw `發送時找不到頻道：${msg_topic.topic}`;
 				}
 			});
 		} catch (err) {
