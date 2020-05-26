@@ -5,9 +5,8 @@ import { encode, decode } from './proto_helper';
 import * as electronLocalshortcut from 'electron-localshortcut';
 import { getCaches, storeCache, storeConfigCache, getConfigCache } from './storage';
 import { loadConfig } from './load_config';
-import { SiteInfo } from '../core/site_info';
 import { Config } from '../core/config';
-import { mqttMatchTopic } from '../core/util';
+import { mqttMatchTopic , filterHasWildcard } from '../core/util';
 
 let config: Config = {
 	file_url: undefined,
@@ -138,6 +137,10 @@ onConnMQTT(async (sender, mqtt_name) => {
 					if (mqttMatchTopic(topic_info.name, topic_name)) {
 						try {
 							let msg_decoded = await decode(topic_info, msg);
+							if (filterHasWildcard(topic_info.name)) {
+								// 補上主題名字
+								msg_decoded = topic_name + '\n--------\n' + msg_decoded;
+							}
 							sendMsg(sender, mqtt_name, { topic: topic_info.name, msg: msg_decoded });
 						} catch { }
 					}

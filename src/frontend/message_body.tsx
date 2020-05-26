@@ -3,7 +3,6 @@ import { Map, List } from 'immutable';
 import { MyMQClient } from './mqtt_client';
 import { SiteCtx } from './context';
 import { SiteInfo, ConnectState } from '../core/site_info';
-import { filterHasWildcard } from '../core/util';
 
 export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 	let [has_selected, setHasSelected] = useState(false);
@@ -30,10 +29,6 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 					// 註冊
 					client.sub(topic.name, (topic_str, msg) => {
 						setMsgMap(msg_map => {
-							if (filterHasWildcard(topic.name)) {
-								// 補上主題名字
-								msg = topic_str + '\n--------\n' + msg;
-							}
 							let list = msg_map.get(topic.name).push(msg);
 							return msg_map.set(topic.name, list);
 						});
