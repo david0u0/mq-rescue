@@ -21,7 +21,7 @@ export class MyMQClient {
 			let client = this.client = mqtt.connect({
 				host: this.site.addr,
 				port: this.site.port,
-				clientId: 'mq-savior',
+				clientId: `mq-savior-${Math.random().toString(36).substring(2)}`,
 				protocol: 'mqtts',
 				key: fs.readFileSync(joinPrjRoot(this.site.key_path)),
 				cert: fs.readFileSync(joinPrjRoot(this.site.cert_path)),
