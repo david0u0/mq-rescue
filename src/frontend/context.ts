@@ -3,6 +3,7 @@ import { SiteInfo, ConnectState  } from '../core/site_info';
 
 // TODO: 多拆幾個上下文
 export const SiteCtx = React.createContext({
+	mute: false,
 	cur_site: 0,
 	all_site: Array<SiteInfo>(),
 	cur_topics: Array<number>(),

@@ -19,8 +19,8 @@ function MQLabel(params: LabelParam): JSX.Element {
 	);
 }
 
-export function MQHeader(): JSX.Element {
-	const { cur_site, setCurSite, all_site, all_states } = useContext(SiteCtx);
+export function MQHeader(params: { setMute: (boolean) => void }): JSX.Element {
+	const { cur_site, setCurSite, all_site, all_states, mute } = useContext(SiteCtx);
 	const ref_file = useRef<HTMLInputElement>();
 	let cur_site_obj = all_site[cur_site];
 	let status_msg = `${cur_site_obj.addr}:${cur_site_obj.port} ${all_states[cur_site]}`;
@@ -37,6 +37,11 @@ export function MQHeader(): JSX.Element {
 									setCurSite(i);
 								}} />;
 						})
+					}
+					{
+						mute ?
+							<button onClick={() => params.setMute(false)}>解除靜音</button> :
+							<button onClick={() => params.setMute(true)}>全部靜音</button>
 					}
 					<div className="mq-label" style={{ flex: 1 }} />
 				</>

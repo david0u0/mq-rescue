@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Map, List } from 'immutable';
 import { MyMQClient } from './mqtt_client';
 import { SiteCtx } from './context';
@@ -10,8 +10,11 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 	let [client, setClient] = useState(new MyMQClient(params.site));
 	let [msg_map, setMsgMap] = useState<Map<string, List<string>>>(Map({}));
 	let [search_str, setSearchStr] = useState('');
-	const { cur_site, all_site, setCurState, cur_topics } = useContext(SiteCtx);
+	const { mute, cur_site, all_site, setCurState, cur_topics } = useContext(SiteCtx);
 	const is_selected = (params.site === all_site[cur_site]);
+
+	let mute_ref = useRef(false);
+	mute_ref.current = mute;
 
 	let cur_topic = all_site[cur_site].topics[cur_topics[cur_site]];
 
@@ -28,10 +31,12 @@ export function MessageBody(params: { site: SiteInfo }): JSX.Element {
 					});
 					// 註冊
 					client.sub(topic.name, (topic_str, msg) => {
-						setMsgMap(msg_map => {
-							let list = msg_map.get(topic.name).push(msg);
-							return msg_map.set(topic.name, list);
-						});
+						if (!mute_ref.current) {
+							setMsgMap(msg_map => {
+								let list = msg_map.get(topic.name).push(msg);
+								return msg_map.set(topic.name, list);
+							});
+						}
 					});
 				}
 				setReady(true);

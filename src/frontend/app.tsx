@@ -12,6 +12,7 @@ function App(): JSX.Element {
 	const [all_site, setAllSite] = useState<SiteInfo[]>([]);
 	const [cur_topics, setCurTopics] = useState<number[]>([]);
 	const [all_states, setAllStates] = useState<ConnectState[]>([]);
+	const [mute, setMute] = useState(false);
 
 	function setCurTopic(index: number): void {
 		let new_cur_topics = [...cur_topics];
@@ -53,9 +54,9 @@ function App(): JSX.Element {
 	}
 
 	return (
-		<SiteCtx.Provider value={{ cur_site, all_states, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
+		<SiteCtx.Provider value={{ mute, cur_site, all_states, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
 			<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-				<MQHeader />
+				<MQHeader setMute={(m: boolean) => setMute(m)} />
 				<div style={{ display: 'flex', flex: 1, width: '100%' }}>
 					{
 						all_site.map(site => {

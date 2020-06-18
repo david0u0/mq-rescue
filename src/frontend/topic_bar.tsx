@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { SiteCtx } from './context';
 import { pubMQTT, getCaches, setCache, onToggleWriting, onFireMessage, onMsgMQTT } from './ipc_render';
 import { SiteInfo } from '../core/site_info';
@@ -88,6 +88,10 @@ type TopicBlockParams = {
 function TopicBlock(params: TopicBlockParams): JSX.Element {
 	const [message, setMessage] = useState('');
 	const [unread, setUnread] = useState(0);
+	const { mute } = useContext(SiteCtx);
+
+	let mute_ref = useRef(false);
+	mute_ref.current = mute;
 
 	useEffect(() => {
 		setMessage(params.default_msg);
@@ -101,7 +105,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 
 	useEffect(() => {
 		onMsgMQTT(params.site.name, ({ topic }) => {
-			if (params.name == topic) {
+			if (params.name == topic && !mute_ref.current) {
 				setUnread(unread => unread + 1);
 			}
 		});
