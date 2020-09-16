@@ -65,7 +65,7 @@ export function TopicBar(params: { site: SiteInfo }): JSX.Element {
 								try {
 									await pubMQTT(params.site.name, { topic: topic.name, msg });
 								} catch (err) {
-									alert(`編碼失敗！${err}`);
+									alert(`編碼失敗！${JSON.stringify(err)}`);
 								}
 							}
 						}} />;
@@ -127,7 +127,7 @@ function TopicBlock(params: TopicBlockParams): JSX.Element {
 		<div style={{ flex: 10, paddingTop: '4px', paddingBottom: '4px' }}>
 			<div>
 				{params.name}
-				{ unread > 0 ? <span className='unread'>{unread}</span> : null }
+				{unread > 0 ? <span className='unread'>{unread}</span> : null}
 			</div>
 			{
 				(() => {

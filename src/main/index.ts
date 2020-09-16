@@ -6,7 +6,7 @@ import * as electronLocalshortcut from 'electron-localshortcut';
 import { getCaches, storeCache, storeConfigCache, getConfigCache } from './storage';
 import { loadConfig } from './load_config';
 import { Config } from '../core/config';
-import { mqttMatchTopic , filterHasWildcard } from '../core/util';
+import { mqttMatchTopic, filterHasWildcard } from '../core/util';
 
 let config: Config = {
 	file_url: undefined,
@@ -42,7 +42,7 @@ function createWindow(): null | BrowserWindow {
 	// 註銷所有熱鍵
 	electronLocalshortcut.unregisterAll(win);
 	// 分頁熱鍵
-	let f_keys = ['F1','F2','F3','F4','F5','F6','F7']; // 應該沒人會開七個分頁吧……
+	let f_keys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7']; // 應該沒人會開七個分頁吧……
 	for (let [i, key] of f_keys.entries()) {
 		electronLocalshortcut.register(win, key, (() => {
 			if (win != null) {

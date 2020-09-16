@@ -6,7 +6,7 @@ import {
 import { SiteInfo } from '../core/site_info';
 import { Config } from '../core/config';
 
-function getMsg(obj: string | Error ): string {
+function getMsg(obj: string | Error): string {
 	if (typeof obj == 'string') {
 		return obj;
 	} else if ('message' in obj) {
@@ -75,6 +75,7 @@ export function onPubMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) 
 			evt.sender.send(Pub(mqtt_name), OK);
 		} catch (err) {
 			evt.sender.send(Pub(mqtt_name), err);
+			console.log("pub mqtt 出錯");
 			console.log(err);
 		}
 	});
