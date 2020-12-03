@@ -137,11 +137,11 @@ onConnMQTT(async (sender, mqtt_name) => {
 					if (mqttMatchTopic(topic_info.name, topic_name)) {
 						try {
 							let msg_decoded = await decode(topic_info, msg);
+							let concrete_topic: string | undefined = undefined;
 							if (filterHasWildcard(topic_info.name)) {
-								// 補上主題名字
-								msg_decoded = topic_name + '\n--------\n' + msg_decoded;
+								concrete_topic = topic_name;
 							}
-							sendMsg(sender, mqtt_name, { topic: topic_info.name, msg: msg_decoded });
+							sendMsg(sender, mqtt_name, { topic: topic_info.name, concrete_topic, msg: msg_decoded });
 						} catch { }
 					}
 				}

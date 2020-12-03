@@ -1,7 +1,8 @@
-import { SiteInfo, ConnectState } from '../core/site_info';
+import { MsgWithTopic } from '../core/ipc_interface';
+import { SiteInfo, ConnectState, TopicInfo } from '../core/site_info';
 import { connMQTT, onMsgMQTT, subMQTT } from './ipc_render';
 
-type MsgHandler = (topic: string, msg: string) => void;
+type MsgHandler = (msg: MsgWithTopic) => void;
 
 export class MyMQClient {
 	handlers: { [filter : string]: MsgHandler[] };
@@ -16,11 +17,10 @@ export class MyMQClient {
 			await connMQTT(this.site.name);
 			this.conn_state = ConnectState.Connected;
 			onMsgMQTT(this.site.name, result => {
-				const { topic, msg } = result;
 				for (let filter of Object.keys(this.handlers)) {
-					if (filter == topic) {
+					if (filter == result.topic) {
 						for (let handler of this.handlers[filter]) {
-							handler(topic, msg);
+							handler(result);
 						}
 					}
 				}
@@ -30,13 +30,13 @@ export class MyMQClient {
 			throw err;
 		}
 	}
-	async sub(filter: string, handler: MsgHandler): Promise<void> {
+	async sub(topic: TopicInfo, handler: MsgHandler): Promise<void> {
 		if (this.conn_state == ConnectState.Connected) {
-			if (typeof this.handlers[filter] == 'undefined') {
-				this.handlers[filter] = [];
-				subMQTT(this.site.name, filter);
+			if (typeof this.handlers[topic.name] == 'undefined') {
+				this.handlers[topic.name] = [];
+				subMQTT(this.site.name, topic);
 			}
-			this.handlers[filter].push(handler);
+			this.handlers[topic.name].push(handler);
 		} else {
 			throw 'client not connected';
 		}

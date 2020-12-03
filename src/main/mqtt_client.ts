@@ -1,6 +1,6 @@
 import * as mqtt from 'mqtt';
 import * as fs from 'fs';
-import { SiteInfo, ConnectState } from '../core/site_info';
+import { SiteInfo, ConnectState, TopicInfo } from '../core/site_info';
 import { joinPrjRoot } from './load_config';
 
 export class MyMQClient {
@@ -49,9 +49,13 @@ export class MyMQClient {
 			});
 		}
 	}
-	sub(topic: string) {
+	sub(topic: TopicInfo) {
 		if (this.client) {
-			this.client.subscribe(topic);
+			console.log(`subscribe ${JSON.stringify(topic)}`);
+			this.client.subscribe(topic.name);
+			if (!this.site.topics.find(t => t.name == topic.name)) {
+				this.site.topics.push(topic);
+			}
 		} else {
 			throw 'sub fail: client is null!';
 		}

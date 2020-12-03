@@ -3,7 +3,7 @@ import {
 	AskConfig, Conn, OK, MsgWithTopic, Sub, Msg, Pub,
 	FireMessage, SwitchPage, SwitchTopic, GetCache, SetCache, ToggleWriting, ConfigFile,
 } from '../core/ipc_interface';
-import { SiteInfo } from '../core/site_info';
+import { SiteInfo, TopicInfo } from '../core/site_info';
 import { Config } from '../core/config';
 
 function getMsg(obj: string | Error): string {
@@ -58,9 +58,9 @@ export function onSetCache(mqtt_name: string, handler: (msg_topic: MsgWithTopic)
 	});
 }
 
-export function onSubMQTT(mqtt_name: string, handler: (topic: string) => void): void {
-	ipc.on(Sub(mqtt_name), (evt: any, msg: string) => {
-		handler(msg);
+export function onSubMQTT(mqtt_name: string, handler: (topic: TopicInfo) => void): void {
+	ipc.on(Sub(mqtt_name), (evt: any, topic: TopicInfo) => {
+		handler(topic);
 	});
 }
 

@@ -16,5 +16,6 @@ export function SetCache(mqtt_name: string) { return `set-cache/${mqtt_name}`; }
 
 export type MsgWithTopic = {
     topic: string,
+    concrete_topic?: string;
     msg: string,
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { MQHeader } from './mq_header';
-import { SiteInfo, ConnectState } from '../core/site_info';
+import { SiteInfo, ConnectState, TopicInfo } from '../core/site_info';
 import { SiteCtx } from './context';
 import { TopicBar } from './topic_bar';
 import { MessageBody } from './message_body';
@@ -23,6 +23,14 @@ function App(): JSX.Element {
 		let new_all_states = [...all_states];
 		new_all_states[cur_site] = state;
 		setAllStates(new_all_states);
+	}
+	function addTopic(topic: TopicInfo): void {
+		let new_sites = [...all_site];
+		let site = new_sites[cur_site];
+		if (!site.topics.find(t => t.name == topic.name)) {
+			site.topics.push(topic);
+		}
+		setAllSite(new_sites);
 	}
 
 	useEffect(() => {
@@ -54,7 +62,7 @@ function App(): JSX.Element {
 	}
 
 	return (
-		<SiteCtx.Provider value={{ mute, cur_site, all_states, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
+		<SiteCtx.Provider value={{ mute, addTopic, cur_site, all_states, setCurSite, all_site, setCurTopic, cur_topics, setCurState }}>
 			<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
 				<MQHeader setMute={(m: boolean) => setMute(m)} />
 				<div style={{ display: 'flex', flex: 1, width: '100%' }}>

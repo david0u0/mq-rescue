@@ -4,6 +4,7 @@ import {
 	GetCache, SetCache, ToggleWriting, FireMessage, ConfigFile
 } from '../core/ipc_interface';
 import { Config } from '../core/config';
+import { TopicInfo } from '../core/site_info';
 
 export function askConfig(): Promise<Config> {
 	return new Promise((resolve, reject) => {
@@ -55,7 +56,7 @@ export function onMsgMQTT(mqtt_name: string, handler: (msg_topic: MsgWithTopic) 
 	});
 }
 
-export function subMQTT(mqtt_name: string, topic: string) {
+export function subMQTT(mqtt_name: string, topic: TopicInfo) {
 	ipc.send(Sub(mqtt_name), topic);
 }
 
